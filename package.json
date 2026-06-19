@@ -1,0 +1,35 @@
+{
+  "name": "cpdd-placement-agent",
+  "version": "1.0.0",
+  "description": "CPDD Placement Communication Agent - Web UI + Telegram Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "check": "node --check index.js && echo 'Syntax OK'"
+  },
+  "keywords": [
+    "placement",
+    "telegram",
+    "email",
+    "whatsapp",
+    "gcet",
+    "cpdd"
+  ],
+  "author": "Ayush Shukla",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "dotenv": "^16.3.1",
+    "node-telegram-bot-api": "^0.64.0",
+    "nodemailer": "^6.9.7",
+    "pdf-parse": "^1.1.1",
+    "openai": "^4.52.7"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

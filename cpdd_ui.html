@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CPDD — Placement Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
+<style>
+  :root{
+    --paper:#F3EEDE;
+    --paper-2:#EAE2CA;
+    --ink:#15130F;
+    --red:#C0392B;
+    --red-deep:#8E2A20;
+    --red-light:#E8746F;
+    --brass:#A6792B;
+    --green:#1C5E4A;
+    --green-light:#2D8659;
+    --line:rgba(21,19,15,0.14);
+    --line-strong:rgba(21,19,15,0.28);
+    --muted:#6B6555;
+    --accent-gradient: linear-gradient(135deg, #C0392B 0%, #A6792B 100%);
+    --card-shadow: 0 8px 24px rgba(0,0,0,0.1), 0 0 0 1px rgba(21,19,15,0.08);
+    --hover-lift: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  * {box-sizing:border-box;}
+  html,body {margin:0;padding:0;}
+  
+  body {
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.025) 0px, rgba(0,0,0,0.025) 1px, transparent 1px, transparent 3px),
+      linear-gradient(135deg, #0d0c09 0%, #1a1815 100%);
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    padding:14px 0;
+    position: relative;
+  }
+
+  .device {
+    width:390px;
+    background:var(--paper);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(192,57,43,0.08), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(166,121,43,0.06), transparent 50%),
+      repeating-linear-gradient(135deg, rgba(21,19,15,0.012) 0px, rgba(21,19,15,0.012) 1px, transparent 1px, transparent 7px);
+    border-radius:24px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.3);
+    position:relative;
+    overflow:hidden;
+    min-height:780px;
+    backdrop-filter: blur(10px);
+  }
+
+  .clamp {
+    position:absolute;
+    top:-10px; left:50%;
+    transform:translateX(-50%);
+    width:96px; height:26px;
+    background:linear-gradient(180deg,#3a3530,#1c1a16);
+    border-radius:6px;
+    z-index:50;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  
+  .clamp::before {
+    content:"";
+    position:absolute;
+    top:6px; left:50%;
+    transform:translateX(-50%);
+    width:70px; height:6px;
+    border-radius:3px;
+    background:rgba(0,0,0,0.4);
+  }
+
+  .header {
+    background:linear-gradient(135deg, var(--ink) 0%, #2a2824 100%);
+    color:var(--paper);
+    padding:30px 22px 20px;
+    position:relative;
+    overflow:hidden;
+  }
+  
+  .header::before {
+    content:"";
+    position:absolute;
+    top:0; left:-50%;
+    width:200%; height:200%;
+    background:radial-gradient(circle at 30% 50%, rgba(192,57,43,0.15), transparent 50%);
+    animation:float 8s ease-in-out infinite;
+    pointer-events:none;
+  }
+
+  .header::after {
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 60%, rgba(192,57,43,0.12) 100%);
+    pointer-events:none;
+  }
+
+  @keyframes float {
+    0%, 100% { transform:translate(0, 0); }
+    50% { transform:translate(20px, -10px); }
+  }
+
+  .header .file-no {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--red-light);
+    font-weight:600;
+    text-transform:uppercase;
+    animation:slideInLeft 0.6s ease-out;
+  }
+
+  .header h1 {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:28px;
+    font-weight:800;
+    margin:8px 0 4px;
+    letter-spacing:-0.5px;
+    line-height:1.1;
+    color:#FFF;
+    animation:slideInUp 0.7s ease-out 0.1s backwards;
+  }
+
+  .header .sub {
+    font-size:12px;
+    color:#B8B2A1;
+    font-family:'Inter',sans-serif;
+    animation:slideInUp 0.7s ease-out 0.2s backwards;
+  }
+
+  .header .pulse-row {
+    display:flex; align-items:center; gap:7px;
+    margin-top:16px;
+    animation:slideInUp 0.7s ease-out 0.3s backwards;
+  }
+
+  .pulse-dot {
+    width:8px; height:8px; border-radius:50%;
+    background:linear-gradient(135deg, #3FD583, #2EC770);
+    position:relative;
+    box-shadow:0 0 12px rgba(63,213,131,0.6);
+  }
+
+  .pulse-dot::after {
+    content:"";
+    position:absolute; inset:-6px;
+    border-radius:50%;
+    border:2px solid #3FD583;
+    animation:pulse 2s ease-out infinite;
+    opacity:0.8;
+  }
+
+  @keyframes pulse {
+    0% { transform:scale(0.6); opacity:1; }
+    100% { transform:scale(2.2); opacity:0; }
+  }
+
+  .header .pulse-row span {
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:#A8A299;
+    font-weight:600;
+  }
+
+  @keyframes slideInLeft {
+    from { opacity:0; transform:translateX(-20px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+
+  @keyframes slideInUp {
+    from { opacity:0; transform:translateY(15px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .scroll {
+    padding:24px 18px 120px;
+    display:flex;
+    flex-direction:column;
+    gap:26px;
+  }
+
+  .section-tag {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .section-tag .chip {
+    background:linear-gradient(135deg, var(--red), var(--red-deep));
+    color:#FFF;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:6px;
+    letter-spacing:1px;
+    box-shadow:0 4px 12px rgba(192,57,43,0.3);
+  }
+
+  .section-tag .lbl {
+    font-size:11px;
+    letter-spacing:1.6px;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:700;
+  }
+
+  .section-tag::after {
+    content:"";
+    flex:1;
+    height:1px;
+    background:repeating-linear-gradient(90deg, var(--line-strong) 0, var(--line-strong) 4px, transparent 4px, transparent 8px);
+  }
+
+  .mode-card {
+    background:linear-gradient(135deg, #FFFDF6, #FBF9F0);
+    border:2px solid var(--line);
+    border-radius:10px;
+    padding:20px 14px;
+    text-align:center;
+    cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .mode-card:hover {
+    transform:translateY(-4px);
+    border-color:var(--red);
+    box-shadow:0 8px 20px rgba(192,57,43,0.15);
+  }
+
+  .mode-card i {
+    font-size:26px;
+    display:block;
+    margin-bottom:10px;
+    color:var(--muted);
+    transition:all 0.3s ease;
+  }
+
+  .mode-card span {
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    line-height:1.4;
+    display:block;
+    transition:color 0.3s ease;
+  }
+
+  .mode-card.active {
+    border-color:var(--red);
+    background:linear-gradient(135deg, rgba(192,57,43,0.08), rgba(166,121,43,0.06));
+    box-shadow:0 8px 24px rgba(192,57,43,0.2), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+
+  .mode-card.active i {
+    color:var(--red);
+    transform:scale(1.15);
+  }
+
+  .mode-card.active span {
+    color:var(--ink);
+  }
+
+  .card {
+    background:linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%);
+    border:1.5px solid rgba(192,57,43,0.1);
+    border-radius:12px;
+    padding:20px;
+    position:relative;
+    box-shadow:var(--card-shadow);
+    transition:var(--hover-lift), box-shadow 0.3s ease;
+    animation:cardPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .card:hover {
+    transform:translateY(-4px);
+    box-shadow:0 12px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(21,19,15,0.12);
+    border-color:rgba(192,57,43,0.2);
+  }
+
+  .card::before {
+    content:"";
+    position:absolute; left:0; top:14px; bottom:14px; width:4px;
+    background:linear-gradient(180deg, var(--red), var(--red-light));
+    border-radius:2px;
+    box-shadow:0 0 8px rgba(192,57,43,0.3);
+  }
+
+  @keyframes cardPop {
+    0% { opacity:0; transform:scale(0.95) translateY(10px); }
+    100% { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .tabset {
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+  }
+
+  .tab {
+    flex:1;
+    text-align:center;
+    padding:11px 8px;
+    font-size:12px;
+    font-weight:700;
+    border-radius:8px;
+    border:1.5px solid var(--line);
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:all 0.2s ease;
+    letter-spacing:0.3px;
+    position:relative;
+  }
+
+  .tab:hover {
+    border-color:var(--red);
+    background:rgba(192,57,43,0.04);
+  }
+
+  .tab.active {
+    background:linear-gradient(135deg, var(--red), var(--red-deep));
+    color:#FFF;
+    border-color:var(--red);
+    box-shadow:0 4px 12px rgba(192,57,43,0.3);
+  }
+
+  textarea, input[type="text"], input[type="email"] {
+    width:100%;
+    padding:13px 14px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-family:'Spectral',serif;
+    font-size:14px;
+    font-weight:600;
+    background:linear-gradient(135deg, #FFFDF6, #FBF9F0);
+    color:var(--ink);
+    transition:all 0.3s ease;
+  }
+
+  textarea {
+    min-height:128px;
+    font-family:'JetBrains Mono',monospace;
+    resize:vertical;
+  }
+
+  textarea:focus, input[type="text"]:focus, input[type="email"]:focus {
+    outline:none;
+    border-color:var(--red);
+    box-shadow:0 0 0 4px rgba(192,57,43,0.12), inset 0 1px 2px rgba(192,57,43,0.08);
+    background:linear-gradient(135deg, #FFFDF6, #FFF);
+  }
+
+  textarea::placeholder, input::placeholder {
+    color:#A6A08F;
+    font-weight:500;
+  }
+
+  .upload-zone {
+    border:2px dashed var(--line-strong);
+    border-radius:10px;
+    padding:40px 20px;
+    text-align:center;
+    cursor:pointer;
+    color:var(--muted);
+    font-size:13px;
+    transition:all 0.3s ease;
+    background:linear-gradient(135deg, transparent, rgba(192,57,43,0.02));
+    position:relative;
+    overflow:hidden;
+  }
+
+  .upload-zone::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(45deg, transparent 30%, rgba(192,57,43,0.1) 50%, transparent 70%);
+    transform:translateX(-100%);
+    opacity:0;
+    transition:all 0.3s ease;
+  }
+
+  .upload-zone:hover {
+    border-color:var(--red);
+    background:linear-gradient(135deg, rgba(192,57,43,0.04), rgba(192,57,43,0.02));
+    box-shadow:0 4px 16px rgba(192,57,43,0.1);
+  }
+
+  .upload-zone i {
+    font-size:28px;
+    display:block;
+    margin-bottom:12px;
+    color:var(--brass);
+    transition:transform 0.3s ease;
+  }
+
+  .upload-zone:hover i {
+    transform:scale(1.15) rotate(5deg);
+  }
+
+  input[type=file] {
+    display:none;
+  }
+
+  .btn {
+    width:100%;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    transition:all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .btn::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at center, rgba(255,255,255,0.3), transparent);
+    opacity:0;
+    transition:opacity 0.3s ease;
+  }
+
+  .btn:hover::before {
+    opacity:1;
+  }
+
+  .btn-primary {
+    background:linear-gradient(135deg, var(--red), var(--red-deep));
+    color:#FFF;
+    margin-top:14px;
+    box-shadow:0 8px 20px rgba(192,57,43,0.4);
+  }
+
+  .btn-primary:hover {
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(192,57,43,0.5);
+  }
+
+  .btn-primary:active {
+    transform:translateY(-1px);
+    box-shadow:0 4px 12px rgba(192,57,43,0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity:0.6;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+
+  .btn-ghost {
+    background:transparent;
+    border:2px solid var(--ink);
+    color:var(--ink);
+    transition:all 0.3s ease;
+  }
+
+  .btn-ghost:hover {
+    background:var(--ink);
+    color:var(--paper);
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(21,19,15,0.2);
+  }
+
+  .btn-dark {
+    background:linear-gradient(135deg, var(--ink), #2a2824);
+    color:var(--paper);
+    box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  }
+
+  .btn-dark:hover {
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(0,0,0,0.4);
+  }
+
+  .btn-green {
+    background:linear-gradient(135deg, var(--green), var(--green-light));
+    color:#fff;
+    box-shadow:0 8px 20px rgba(28,94,74,0.4);
+  }
+
+  .btn-green:hover {
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(28,94,74,0.5);
+  }
+
+  .scan-strip {
+    margin-top:16px;
+    background:linear-gradient(135deg, var(--ink), #2a2824);
+    border-radius:8px;
+    padding:14px 16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:#9B9486;
+    display:none;
+    overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.05);
+  }
+
+  .scan-strip.active {
+    display:block;
+    animation:scanIn 0.4s ease-out;
+  }
+
+  @keyframes scanIn {
+    from { opacity:0; max-height:0; }
+    to { opacity:1; max-height:300px; }
+  }
+
+  .scan-line {
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:3px 0;
+    opacity:0;
+    animation:lineIn 0.4s ease forwards;
+  }
+
+  .scan-line .ok {
+    color:#3FD583;
+    font-weight:700;
+  }
+
+  .scan-line .running {
+    color:var(--red-light);
+    font-weight:700;
+    animation:blink 0.8s ease infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity:1; }
+    50% { opacity:0.4; }
+  }
+
+  @keyframes lineIn {
+    from { opacity:0; transform:translateX(-10px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+
+  .toast {
+    position:fixed;
+    bottom:30px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px) scale(0.92);
+    background:linear-gradient(135deg, var(--ink), #2a2824);
+    color:var(--paper);
+    padding:14px 22px;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:700;
+    opacity:0;
+    pointer-events:none;
+    transition:all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index:200;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    white-space:nowrap;
+    box-shadow:0 12px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    border-left:4px solid var(--red);
+    letter-spacing:0.3px;
+  }
+
+  .toast.show {
+    opacity:1;
+    transform:translateX(-50%) translateY(0) scale(1);
+    pointer-events:auto;
+  }
+
+  .toast i {
+    color:#3FD583;
+    font-size:17px;
+  }
+
+  .empty {
+    text-align:center;
+    padding:40px 18px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .empty i {
+    font-size:32px;
+    display:block;
+    margin-bottom:12px;
+    color:var(--line-strong);
+    opacity:0.6;
+  }
+
+  .spinner {
+    width:15px;
+    height:15px;
+    border:2.5px solid rgba(255,246,239,0.3);
+    border-top-color:#FFF6EF;
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform:rotate(360deg); }
+  }
+
+  .hidden {
+    display:none !important;
+  }
+
+  .slip {
+    background:linear-gradient(135deg, #FFFDF6, #FBF9F0);
+    border:1.5px solid rgba(192,57,43,0.15);
+    position:relative;
+    transform:rotate(-0.3deg);
+    box-shadow:0 12px 32px rgba(21,19,15,0.15), 0 0 1px rgba(21,19,15,0.1);
+    border-radius:10px;
+    animation:slipDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding:22px;
+  }
+
+  @keyframes slipDrop {
+    0% { opacity:0; transform:translateY(-20px) rotate(-2deg) scale(0.95); }
+    100% { opacity:1; transform:translateY(0) rotate(-0.3deg) scale(1); }
+  }
+
+  .slip-head {
+    padding:0 0 14px;
+    border-bottom:2px dashed rgba(192,57,43,0.2);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:18px;
+  }
+
+  .slip-head .co {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:24px;
+    font-weight:800;
+    margin:0;
+    color:var(--ink);
+  }
+
+  .slip-head .role {
+    font-size:12px;
+    color:var(--muted);
+    margin:0;
+    font-weight:600;
+  }
+
+  .stamp {
+    border:2.5px solid var(--red);
+    color:var(--red);
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    padding:6px 11px;
+    border-radius:4px;
+    transform:rotate(8deg);
+    white-space:nowrap;
+    flex-shrink:0;
+    opacity:1;
+    box-shadow:0 2px 6px rgba(192,57,43,0.2);
+  }
+
+  .field-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px 20px;
+    margin-bottom:18px;
+  }
+
+  .field {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .field .k {
+    font-size:9px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    color:var(--brass);
+    font-weight:800;
+  }
+
+  .field .v {
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    font-weight:700;
+    color:var(--ink);
+  }
+
+  .summary-box {
+    background:linear-gradient(135deg, var(--paper-2), rgba(234,226,202,0.8));
+    border-radius:8px;
+    padding:14px 16px;
+    font-size:12.5px;
+    line-height:1.7;
+    color:#3A3933;
+    border-left:4px solid var(--brass);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
+    margin-bottom:18px;
+  }
+
+  .action-row {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:11px;
+  }
+
+  .action-row .btn {
+    margin-top:0;
+    font-size:12px;
+    padding:12px 8px;
+  }
+
+  .output-card {
+    background:linear-gradient(135deg, #FFFDF6, #FBF9F0);
+    border:1.5px solid rgba(192,57,43,0.1);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:var(--card-shadow);
+  }
+
+  .output-tabs {
+    display:flex;
+    background:linear-gradient(90deg, var(--paper-2), rgba(234,226,202,0.7));
+    border-bottom:1px solid rgba(192,57,43,0.1);
+  }
+
+  .output-tab {
+    flex:1;
+    text-align:center;
+    padding:14px 10px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--muted);
+    cursor:pointer;
+    border-bottom:3px solid transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    transition:all 0.3s ease;
+  }
+
+  .output-tab:hover {
+    color:var(--ink);
+  }
+
+  .output-tab.active {
+    color:var(--ink);
+    background:linear-gradient(135deg, rgba(192,57,43,0.08), transparent);
+    border-bottom-color:var(--red);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .output-body {
+    padding:20px;
+  }
+
+  .mail-subject {
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:17px;
+    font-weight:800;
+    margin:0 0 14px;
+    padding-bottom:14px;
+    border-bottom:2px dashed rgba(192,57,43,0.2);
+    color:var(--ink);
+  }
+
+  .mail-text, .wa-bubble {
+    font-size:13px;
+    line-height:1.8;
+    color:#2B2A26;
+    white-space:pre-wrap;
+    max-height:280px;
+    overflow-y:auto;
+    font-family:'Inter',sans-serif;
+  }
+
+  .wa-preview {
+    background:#0B141A;
+    border-radius:12px;
+    padding:18px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .wa-bubble {
+    background:linear-gradient(135deg, #005C4B, #004A38);
+    color:#E9EDEF;
+    border-radius:10px;
+    padding:13px 15px;
+    font-size:13px;
+    line-height:1.7;
+    white-space:pre-wrap;
+    max-height:240px;
+    overflow-y:auto;
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .send-row {
+    display:flex;
+    gap:10px;
+    padding:18px 20px;
+    border-top:1.5px solid rgba(192,57,43,0.1);
+  }
+
+  .recipient-field {
+    padding:0 20px;
+    margin-top:14px;
+  }
+
+  .recipient-field input {
+    width:100%;
+  }
+
+  @media (max-width: 600px) {
+    .device {
+      width:100%;
+      border-radius:0;
+    }
+    .clamp {
+      display:none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="clamp"></div>
+
+  <div class="header">
+    <p class="file-no">FILE NO. CPDD/2027/PLACEMENT-AGENT</p>
+    <h1>The desk that never sleeps</h1>
+    <p class="sub">Drop a notice in. Walk away with a mail and a broadcast.</p>
+    <div class="pulse-row">
+      <span class="pulse-dot"></span>
+      <span>STANDING BY · 2027 BATCH DESK</span>
+    </div>
+  </div>
+
+  <div class="scroll">
+
+    <!-- MODE SWITCHER -->
+    <div>
+      <div class="section-tag">
+        <span class="chip">·</span>
+        <span class="lbl">What are you doing today</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="mode-card active" data-mode="notice" style="background:linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%);border:2px solid var(--red);border-radius:10px;padding:20px 14px;text-align:center;cursor:pointer;transition:all 0.3s ease;">
+          <i class="ti ti-news" style="font-size:26px;display:block;margin-bottom:10px;color:var(--red);"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--ink);line-height:1.4;display:block;">Analyze a placement notice</span>
+        </div>
+        <div class="mode-card" data-mode="custom" style="background:linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%);border:2px solid var(--line);border-radius:10px;padding:20px 14px;text-align:center;cursor:pointer;transition:all 0.3s ease;">
+          <i class="ti ti-pencil" style="font-size:26px;display:block;margin-bottom:10px;color:var(--muted);"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--muted);line-height:1.4;display:block;">Personalize mail</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM MAIL SECTION -->
+    <div id="custom-mail-section" class="hidden">
+      <div class="section-tag">
+        <span class="chip">·</span>
+        <span class="lbl">Write custom mail</span>
+      </div>
+      <div class="card">
+        <textarea id="custom-instruction" placeholder="Tell me what mail you need&#10;Example: Send a mail about tomorrow's event at 4 PM in Seminar Hall 2&#10;Or: Create a mail inviting 2027 batch for coding workshop on Saturday"></textarea>
+        <button class="btn btn-primary" id="custom-ai-btn">
+          <i class="ti ti-sparkles" style="font-size:17px;"></i>
+          <span id="custom-ai-btn-text">✨ Write this mail</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 1: INTAKE -->
+    <div id="notice-intake-section">
+      <div class="section-tag">
+        <span class="chip">01</span>
+        <span class="lbl">Bring in a notice</span>
+      </div>
+      <div class="card">
+        <div class="tabset">
+          <div class="tab active" data-tab="text">Paste text</div>
+          <div class="tab" data-tab="file">Upload file</div>
+        </div>
+
+        <div id="pane-text">
+          <textarea id="notif-text" placeholder="Paste the placement notification here&#10;Company / role / CTC / eligibility / deadline..."></textarea>
+        </div>
+
+        <div id="pane-file" class="hidden">
+          <label class="upload-zone" for="file-input">
+            <i class="ti ti-file-upload"></i>
+            <span>Tap to choose a PDF or image</span>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink);margin-top:8px;" id="file-name"></div>
+          </label>
+          <input type="file" id="file-input" accept=".pdf,image/*" />
+        </div>
+
+        <button class="btn btn-primary" id="analyze-btn">
+          <i class="ti ti-scan" style="font-size:17px;"></i>
+          <span id="analyze-btn-text">Run analysis</span>
+        </button>
+
+        <div class="scan-strip" id="scan-strip"></div>
+      </div>
+    </div>
+
+    <!-- STEP 2: NOTICE SLIP -->
+    <div id="slip-section">
+      <div class="section-tag">
+        <span class="chip">02</span>
+        <span class="lbl">Extracted notice</span>
+      </div>
+      <div class="slip-wrap">
+        <div class="empty" id="slip-empty">
+          <i class="ti ti-receipt-2"></i>
+          Run an analysis to see the slip here
+        </div>
+        <div class="slip hidden" id="slip">
+          <div class="slip-head">
+            <div>
+              <p class="co" id="slip-company">—</p>
+              <p class="role" id="slip-role">—</p>
+            </div>
+            <div class="stamp">Verified · AI</div>
+          </div>
+          <div class="field-grid">
+            <div class="field"><span class="k">CTC</span><span class="v" id="slip-ctc">—</span></div>
+            <div class="field"><span class="k">Location</span><span class="v" id="slip-location">—</span></div>
+            <div class="field"><span class="k">Batch</span><span class="v" id="slip-batch">—</span></div>
+            <div class="field"><span class="k">Deadline</span><span class="v" id="slip-deadline">—</span></div>
+          </div>
+          <div class="summary-box">
+            <span class="k">Summary</span>
+            <div id="slip-summary">—</div>
+          </div>
+          <div class="action-row">
+            <button class="btn btn-ghost" id="make-mail-btn"><i class="ti ti-mail" style="font-size:16px;"></i> Draft mail</button>
+            <button class="btn btn-ghost" id="make-wa-btn"><i class="ti ti-brand-whatsapp" style="font-size:16px;"></i> WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: OUTPUT -->
+    <div id="output-section">
+      <div class="section-tag">
+        <span class="chip">03</span>
+        <span class="lbl">Send it</span>
+      </div>
+      <div class="output-card">
+        <div class="output-tabs">
+          <div class="output-tab active" data-out="mail"><i class="ti ti-mail" style="font-size:16px;"></i> Mail</div>
+          <div class="output-tab" data-out="wa"><i class="ti ti-brand-whatsapp" style="font-size:16px;"></i> WhatsApp</div>
+        </div>
+
+        <div class="output-body" id="out-mail">
+          <div class="empty" id="mail-empty"><i class="ti ti-file-text"></i>Draft a mail from a notice slip above</div>
+          <div class="hidden" id="mail-content">
+            <p class="mail-subject" id="mail-subject">—</p>
+            <div class="mail-text" id="mail-text">—</div>
+          </div>
+        </div>
+
+        <div class="output-body hidden" id="out-wa">
+          <div class="empty" id="wa-empty"><i class="ti ti-brand-whatsapp"></i>Draft a WhatsApp message from a notice slip above</div>
+          <div class="hidden" id="wa-content">
+            <div class="wa-preview"><div class="wa-bubble" id="wa-text">—</div></div>
+          </div>
+        </div>
+
+        <div id="mail-send-row" class="hidden">
+          <div class="recipient-field">
+            <input type="email" id="recipient-input" placeholder="recipient@email.com" />
+          </div>
+          <div class="send-row">
+            <button class="btn btn-dark" id="regen-mail-btn" style="flex:0 0 48px;"><i class="ti ti-refresh" style="font-size:17px;"></i></button>
+            <button class="btn btn-primary" id="send-mail-btn" style="flex:1;margin-top:0;"><i class="ti ti-send" style="font-size:16px;"></i> Send mail</button>
+          </div>
+        </div>
+
+        <div id="wa-send-row" class="hidden">
+          <div class="send-row">
+            <button class="btn btn-dark" id="regen-wa-btn" style="flex:0 0 48px;"><i class="ti ti-refresh" style="font-size:17px;"></i></button>
+            <button class="btn btn-green" id="send-wa-btn" style="flex:1;"><i class="ti ti-brand-whatsapp" style="font-size:16px;"></i> Open WhatsApp</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"><i class="ti ti-circle-check"></i><span id="toast-text">Done</span></div>
+</div>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+  const API = "/api";
+
+  // State
+  let currentJobData = null;
+  let currentOriginalText = '';
+  let currentMailSubject = '';
+  let currentMailBody = '';
+  let currentWaText = '';
+  let currentMode = 'notice'; // 'notice' or 'custom'
+
+  // Toast
+  function toast(msg){
+    $('toast-text').textContent = msg;
+    $('toast').classList.add('show');
+    setTimeout(() => $('toast').classList.remove('show'), 2400);
+  }
+
+  // ============= MODE SWITCHING =============
+  document.querySelectorAll('.mode-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      const mode = card.dataset.mode;
+      currentMode = mode;
+      
+      // Update styles
+      document.querySelectorAll('.mode-card').forEach(c => {
+        if (c.dataset.mode === 'notice') {
+          c.style.border = c.dataset.mode === mode ? '2px solid var(--red)' : '2px solid var(--line)';
+          c.style.background = c.dataset.mode === mode ? 'linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%)' : 'linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%)';
+          c.querySelector('i').style.color = c.dataset.mode === mode ? 'var(--red)' : 'var(--muted)';
+          c.querySelector('span').style.color = c.dataset.mode === mode ? 'var(--ink)' : 'var(--muted)';
+        } else {
+          c.style.border = c.dataset.mode === mode ? '2px solid var(--red)' : '2px solid var(--line)';
+          c.style.background = c.dataset.mode === mode ? 'linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%)' : 'linear-gradient(135deg, #FFFDF6 0%, #FBF9F0 100%)';
+          c.querySelector('i').style.color = c.dataset.mode === mode ? 'var(--red)' : 'var(--muted)';
+          c.querySelector('span').style.color = c.dataset.mode === mode ? 'var(--ink)' : 'var(--muted)';
+        }
+      });
+
+      // Toggle sections
+      $('custom-mail-section').classList.toggle('hidden', mode !== 'custom');
+      $('notice-intake-section').classList.toggle('hidden', mode !== 'notice');
+      $('slip-section').classList.toggle('hidden', mode !== 'notice');
+      $('output-section').classList.toggle('hidden', mode !== 'notice');
+    });
+  });
+
+  // ============= TAB SWITCHING =============
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const which = t.dataset.tab;
+      $('pane-text').classList.toggle('hidden', which !== 'text');
+      $('pane-file').classList.toggle('hidden', which !== 'file');
+    });
+  });
+
+  $('file-input').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    $('file-name').textContent = f ? f.name : '';
+  });
+
+  // ============= OUTPUT TAB SWITCHING =============
+  document.querySelectorAll('.output-tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.output-tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const which = t.dataset.out;
+      $('out-mail').classList.toggle('hidden', which !== 'mail');
+      $('out-wa').classList.toggle('hidden', which !== 'wa');
+      $('mail-send-row').classList.toggle('hidden', which !== 'mail');
+      $('wa-send-row').classList.toggle('hidden', which !== 'wa');
+    });
+  });
+
+  // ============= SCAN ANIMATION =============
+  const SCAN_STEPS = [
+    "parsing raw notice...",
+    "locating company &amp; role...",
+    "extracting compensation figures...",
+    "cross-checking eligibility block...",
+    "reading deadline &amp; links...",
+    "compiling notice slip..."
+  ];
+
+  async function runScanAnimation(){
+    const strip = $('scan-strip');
+    strip.classList.add('active');
+    strip.innerHTML = '';
+    for (let i = 0; i < SCAN_STEPS.length; i++){
+      const line = document.createElement('div');
+      line.className = 'scan-line';
+      line.innerHTML = `<span class="running">›</span><span>${SCAN_STEPS[i]}</span>`;
+      strip.appendChild(line);
+      await new Promise(r => setTimeout(r, 280));
+      line.querySelector('.running').outerHTML = '<span class="ok">✓</span>';
+    }
+    await new Promise(r => setTimeout(r, 300));
+    strip.classList.remove('active');
+  }
+
+  // ============= ANALYZE BUTTON =============
+  $('analyze-btn').addEventListener('click', async () => {
+    const text = $('notif-text').value.trim();
+    const file = $('file-input').files[0];
+    
+    if (!text && !file){ 
+      toast('Add some text or a file first');
+      return; 
+    }
+
+    const btn = $('analyze-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span><span>Scanning...</span>';
+
+    try {
+      let analysisText = text;
+
+      // If file upload
+      if (!text && file) {
+        toast('📥 Extracting from file...');
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const endpoint = file.type === 'application/pdf' ? '/api/extract-pdf' : '/api/extract-image';
+        const res = await fetch(endpoint, { method: 'POST', body: formData });
+        const data = await res.json();
+        
+        if (!res.ok || !data.text) {
+          toast('❌ Could not extract text from file');
+          btn.disabled = false;
+          btn.innerHTML = '<i class="ti ti-scan" style="font-size:17px;"></i><span>Run analysis</span>';
+          return;
+        }
+        analysisText = data.text;
+      }
+
+      await runScanAnimation();
+
+      // Call analysis API
+      const analysisRes = await fetch(`${API}/analyze-notice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: analysisText })
+      });
+
+      const analysisData = await analysisRes.json();
+      if (!analysisRes.ok) throw new Error(analysisData.error);
+
+      currentJobData = analysisData.jobData;
+      currentOriginalText = analysisText;
+
+      // Update slip
+      $('slip-empty').classList.add('hidden');
+      $('slip').classList.remove('hidden');
+      $('slip-company').textContent = currentJobData.company_name || '—';
+      $('slip-role').textContent = currentJobData.role || '—';
+      $('slip-ctc').textContent = currentJobData.ctc || currentJobData.ppo_package || '—';
+      $('slip-location').textContent = currentJobData.location || '—';
+      $('slip-batch').textContent = currentJobData.batch || '—';
+      $('slip-deadline').textContent = currentJobData.deadline || '—';
+      $('slip-summary').textContent = currentJobData.summary || '—';
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-scan" style="font-size:17px;"></i><span>Run analysis</span>';
+      toast('✓ Notice extracted');
+
+      setTimeout(() => {
+        $('slip-section').scrollIntoView({behavior:'smooth', block:'center'});
+      }, 300);
+
+    } catch (error) {
+      console.error(error);
+      toast('❌ ' + (error.message || 'Analysis failed'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-scan" style="font-size:17px;"></i><span>Run analysis</span>';
+    }
+  });
+
+  // ============= CUSTOM MAIL GENERATION =============
+  $('custom-ai-btn').addEventListener('click', async () => {
+    const instruction = $('custom-instruction').value.trim();
+    if (!instruction) {
+      toast('Tell me what mail you need');
+      return;
+    }
+
+    const btn = $('custom-ai-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span><span>Writing...</span>';
+
+    try {
+      const res = await fetch(`${API}/generate-custom-mail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instruction })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      currentMailBody = data.mailDraft;
+      currentMailSubject = 'Important Notice';
+      currentJobData = {};
+
+      // Switch to notice mode to show output
+      currentMode = 'notice';
+      document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-mode="notice"]').classList.add('active');
+      $('custom-mail-section').classList.add('hidden');
+      $('notice-intake-section').classList.remove('hidden');
+
+      $('mail-empty').classList.add('hidden');
+      $('mail-content').classList.remove('hidden');
+      $('mail-subject').textContent = currentMailSubject;
+      $('mail-text').textContent = currentMailBody;
+      $('mail-send-row').classList.remove('hidden');
+
+      document.querySelector('.output-tab[data-out="mail"]').click();
+      $('output-section').classList.remove('hidden');
+      $('slip-section').classList.remove('hidden');
+
+      setTimeout(() => {
+        $('output-section').scrollIntoView({behavior:'smooth', block:'center'});
+      }, 300);
+
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-sparkles" style="font-size:17px;"></i><span>✨ Write this mail</span>';
+      toast('✓ Mail created');
+
+    } catch (error) {
+      console.error(error);
+      toast('❌ ' + (error.message || 'Failed to generate mail'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-sparkles" style="font-size:17px;"></i><span>✨ Write this mail</span>';
+    }
+  });
+
+  // ============= MAIL GENERATION =============
+  $('make-mail-btn').addEventListener('click', async () => {
+    if (!currentJobData) return;
+    toast('✍️ Writing mail draft...');
+    
+    try {
+      const res = await fetch(`${API}/generate-mail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ originalText: currentOriginalText, jobData: currentJobData })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      currentMailBody = data.mailDraft;
+      currentMailSubject = `[Placement] ${currentJobData.company_name || 'Opportunity'}`;
+
+      $('mail-empty').classList.add('hidden');
+      $('mail-content').classList.remove('hidden');
+      $('mail-subject').textContent = currentMailSubject;
+      $('mail-text').textContent = currentMailBody;
+      $('mail-send-row').classList.remove('hidden');
+
+      document.querySelector('.output-tab[data-out="mail"]').click();
+      setTimeout(() => {
+        $('output-section').scrollIntoView({behavior:'smooth', block:'center'});
+      }, 300);
+
+    } catch (error) {
+      console.error(error);
+      toast('❌ ' + (error.message || 'Mail generation failed'));
+    }
+  });
+
+  // ============= WHATSAPP GENERATION =============
+  $('make-wa-btn').addEventListener('click', async () => {
+    if (!currentJobData) return;
+    toast('📱 Writing WhatsApp message...');
+    
+    try {
+      const res = await fetch(`${API}/generate-whatsapp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ originalText: currentOriginalText, jobData: currentJobData })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      currentWaText = data.whatsappMessage;
+
+      $('wa-empty').classList.add('hidden');
+      $('wa-content').classList.remove('hidden');
+      $('wa-text').textContent = currentWaText;
+      $('wa-send-row').classList.remove('hidden');
+
+      document.querySelector('.output-tab[data-out="wa"]').click();
+      setTimeout(() => {
+        $('output-section').scrollIntoView({behavior:'smooth', block:'center'});
+      }, 300);
+
+    } catch (error) {
+      console.error(error);
+      toast('❌ ' + (error.message || 'WhatsApp generation failed'));
+    }
+  });
+
+  // ============= REGENERATE =============
+  $('regen-mail-btn').addEventListener('click', () => {
+    if (currentJobData && currentJobData.company_name) {
+      $('make-mail-btn').click();
+    } else if (currentMailSubject) {
+      toast('Regenerating from custom instruction...');
+      $('custom-ai-btn').click();
+    }
+  });
+  $('regen-wa-btn').addEventListener('click', () => $('make-wa-btn').click());
+
+  // ============= SEND MAIL =============
+  $('send-mail-btn').addEventListener('click', async () => {
+    const to = $('recipient-input').value.trim();
+    if (!to || !to.includes('@')) {
+      toast('❌ Enter valid email address');
+      return;
+    }
+    if (!currentMailBody || !currentMailSubject) {
+      toast('❌ No mail draft found');
+      return;
+    }
+
+    const btn = $('send-mail-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span><span>Sending...</span>';
+
+    try {
+      const res = await fetch(`${API}/send-mail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to,
+          subject: currentMailSubject,
+          body: currentMailBody,
+          jobData: currentJobData
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      toast('✓ Mail sent to ' + to);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-send" style="font-size:16px;"></i> Send mail';
+
+    } catch (error) {
+      console.error(error);
+      toast('❌ ' + (error.message || 'Failed to send mail'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="ti ti-send" style="font-size:16px;"></i> Send mail';
+    }
+  });
+
+  // ============= OPEN WHATSAPP =============
+  $('send-wa-btn').addEventListener('click', () => {
+    const encoded = encodeURIComponent(currentWaText);
+    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    toast('✓ Opened in WhatsApp');
+  });
+
+})();
+</script>
+
+</body>
+</html>
