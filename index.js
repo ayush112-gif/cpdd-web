@@ -146,11 +146,14 @@ const upload = multer({
 
 // Serve HTML UI as static file
 app.get("/", (req, res) => {
-  const uiPath = path.join(__dirname, "cpdd_ui.html");
+  let uiPath = path.join(__dirname, "index.html");
+  if (!fs.existsSync(uiPath)) {
+    uiPath = path.join(__dirname, "cpdd_ui.html");
+  }
   if (fs.existsSync(uiPath)) {
     res.sendFile(uiPath);
   } else {
-    res.send("🚀 Placement Agent Running (Web UI not found - upload cpdd_ui.html)");
+    res.send("🚀 Placement Agent Running (Web UI not found - upload index.html)");
   }
 });
 
@@ -271,8 +274,8 @@ app.post("/api/generate-whatsapp", express.json({ limit: "50mb" }), async (req, 
   }
 });
 
-// Send mail
-app.post("/api/send-mail", express.json({ limit: "50mb" }), async (req, res) => {
+// Send mail with FILE ATTACHMENTS
+app.post("/api/send-mail", upload.array("attachments", 10), async (req, res) => {
   try {
     const { to, subject, body, jobData } = req.body;
     if (!to || !to.includes("@")) return res.status(400).json({ error: "Invalid email address" });
@@ -280,18 +283,41 @@ app.post("/api/send-mail", express.json({ limit: "50mb" }), async (req, res) => 
     if (!body) return res.status(400).json({ error: "No mail body provided" });
 
     console.log(`📤 Sending mail to ${to}...`);
-    const htmlBody = buildEmailTemplate(subject, body, jobData || {});
+    console.log(`📎 Attachments: ${req.files ? req.files.length : 0}`);
+
+    const htmlBody = buildEmailTemplate(subject, body, jobData ? JSON.parse(jobData) : {});
+
+    // Process attachments
+    const attachments = (req.files || []).map((file) => ({
+      filename: file.originalname,
+      path: file.path,
+    }));
 
     await sendMail({
       to,
       subject,
       text: body,
       html: htmlBody,
-      attachments: []
+      attachments
     });
+
+    // Clean up uploaded files
+    setTimeout(() => {
+      (req.files || []).forEach(file => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
+    }, 1000);
 
     res.json({ success: true, message: `✅ Mail sent to ${to}` });
   } catch (error) {
+    // Clean up on error
+    (req.files || []).forEach(file => {
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+    });
     console.error("Mail send error:", error);
     res.status(500).json({ error: error.message || "Failed to send mail" });
   }
