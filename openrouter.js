@@ -7,17 +7,17 @@ const client = new OpenAI({
   maxRetries: 0,  // we handle retries ourselves in callWithRetry
 });
 
-// Confirmed free models June 2026
+// Confirmed free models — June 2026 (verified against openrouter.ai/collections/free-models)
 const TEXT_MODELS = [
-  "openrouter/free",
-  "meta-llama/llama-4-scout:free",
-  "qwen/qwen3-8b:free",
-  "mistralai/mistral-small-3.2-24b-instruct:free",
+  "openai/gpt-oss-120b:free",
+  "z-ai/glm-4.5-air:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "openai/gpt-oss-20b:free",
 ];
 
 const VISION_MODELS = [
-  "meta-llama/llama-4-scout:free",
-  "meta-llama/llama-4-maverick:free",
+  "nvidia/nemotron-nano-12b-v2-vl:free",
+  "openai/gpt-oss-120b:free",
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
