@@ -691,11 +691,11 @@ input[type="file"] { display: none; }
 
 <script>
 // Use the current origin (protocol + host + port) so deployed sites
-// (http or https) correctly call the same backend without mixed-content
-// or wrong-port issues. Keep the original http fallback variable for
-// debugging or deployments where an explicit host:port is required.
+// (http or https) correctly call the same backend without mixed-content.
+// Fallback to localhost:3000 when the origin is invalid (e.g. file://).
+const ORIGIN = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
 const API_FALLBACK = `http://${window.location.hostname}:${window.location.port || 3000}`;
-const API = window.location.origin;
+const API = ORIGIN || API_FALLBACK;
 
 let state = {
   mode: 'analyze',
@@ -820,13 +820,12 @@ async function analyzeNotice() {
   document.getElementById('loadingDesc').textContent = 'Reading your notice';
   
   try {
-    const res = await fetch(API + '/api/analyze-notice', {
+    const data = await apiFetch('/api/analyze-notice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed');
 
     state.jobData = data.jobData;
     state.originalText = text;
@@ -847,6 +846,40 @@ async function analyzeNotice() {
   }
 }
 
+// Helper: fetch with fallback and safe JSON parsing
+async function apiFetch(path, options = {}) {
+  const urls = [];
+  if (API) urls.push(API + path);
+  if (API_FALLBACK) urls.push(API_FALLBACK + path);
+
+  let lastErr = null;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, options);
+      const ct = res.headers.get('content-type') || '';
+      const text = await res.text();
+      if (!res.ok) {
+        // Try to extract a JSON error, otherwise throw the text
+        try {
+          const parsed = JSON.parse(text);
+          throw new Error(parsed.error || parsed.message || JSON.stringify(parsed));
+        } catch (_) {
+          throw new Error(text || res.statusText || `HTTP ${res.status}`);
+        }
+      }
+      if (ct.includes('application/json') || ct.includes('+json')) {
+        try { return JSON.parse(text); } catch (err) { throw new Error('Invalid JSON response: ' + text); }
+      }
+      // If server returns HTML or plain text instead of JSON, fail explicitly.
+      throw new Error('Unexpected non-JSON response from server');
+    } catch (err) {
+      lastErr = err;
+      // try next url
+    }
+  }
+  throw lastErr || new Error('Network error');
+}
+
 async function openMailModal() {
   if (!state.jobData) return;
   
@@ -855,14 +888,13 @@ async function openMailModal() {
   document.getElementById('loadingDesc').textContent = 'One moment';
   
   try {
-    const res = await fetch(API + '/api/generate-mail', {
+    const data = await apiFetch('/api/generate-mail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    
+    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate mail');
+
     state.mailBody = data.mailDraft;
     state.originalMailBody = data.mailDraft;
     state.mailSubject = `[${state.jobData.company_name || 'Placement'}]`;
@@ -886,13 +918,12 @@ async function openMailModal() {
 async function generateWA() {
   if (!state.jobData) return;
   try {
-    const res = await fetch(API + '/api/generate-whatsapp', {
+    const data = await apiFetch('/api/generate-whatsapp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
+    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate WhatsApp');
     toast('✓ WhatsApp message created');
   } catch (e) {
     toast('❌ ' + e.message);
@@ -908,14 +939,13 @@ async function generateCustomAI() {
   document.getElementById('loadingDesc').textContent = 'Creating your mail';
   
   try {
-    const res = await fetch(API + '/api/generate-custom-mail', {
+    const data = await apiFetch('/api/generate-custom-mail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ instruction })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    
+    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate custom mail');
+
     state.mailBody = data.mailDraft;
     state.originalMailBody = data.mailDraft;
     state.mailSubject = 'Custom Mail';
@@ -978,13 +1008,12 @@ async function sendMailModal() {
       formData.append('attachments', file);
     });
     
-    const res = await fetch(API + '/api/send-mail', {
+    const data = await apiFetch('/api/send-mail', {
       method: 'POST',
       body: formData
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-    
+    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to send mail');
+
     closeModal('loadingModal');
     showModal('successModal');
     document.getElementById('successText').textContent = `✓ Sent to ${to}`;
