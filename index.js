@@ -556,7 +556,7 @@ function buildEmailTemplate(subject, bodyText, jobData) {
                   <td style="width:4px;background-color:#2563eb;border-radius:2px;"></td>
                   <td style="padding-left:14px;">
                     <p style="margin:0 0 3px 0;font-size:14px;font-weight:700;color:#1e3a8a;">Ayush Shukla</p>
-                    <p style="margin:0 0 2px 0;font-size:13px;color:#4b5563;">Placement Coordinator</p>
+                    <p style="margin:0 0 2px 0;font-size:13px;color:#4b5563;">Placement Coordinator(IT-A)</p>
                     <p style="margin:0;font-size:13px;color:#4b5563;">CPDD &bull; Galgotias College of Engineering &amp; Technology (GCET) &bull; 2027 Batch</p>
                   </td>
                 </tr>
