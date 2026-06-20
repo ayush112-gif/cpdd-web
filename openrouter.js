@@ -1,23 +1,64 @@
 const OpenAI = require("openai");
 
-const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-  timeout: 25000, // 25s timeout — avoids hanging connections that get killed mid-stream
-  maxRetries: 0,  // we handle retries ourselves in callWithRetry
-});
+// We keep the OpenAI client only for type-compat in a couple of helper
+// spots, but the actual network call below uses raw fetch — Render's
+// network has been truncating the SDK's gzip-decoded streaming responses
+// mid-transfer (ERR_STREAM_PREMATURE_CLOSE), so we bypass that path
+// entirely and do a plain, non-streaming JSON request ourselves.
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+async function rawChatCompletion({ model, temperature, max_tokens, messages }) {
+  const res = await fetch(OPENROUTER_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+      // Ask the server not to gzip the response — avoids the truncated
+      // gzip stream issue seen on Render's network.
+      "Accept-Encoding": "identity",
+    },
+    body: JSON.stringify({
+      model,
+      temperature: temperature ?? 0,
+      max_tokens: max_tokens ?? 800,
+      stream: false,
+      messages,
+    }),
+  });
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (parseErr) {
+    const err = new Error("Invalid JSON response from OpenRouter");
+    err.status = res.status;
+    err.cause = parseErr;
+    throw err;
+  }
+
+  if (!res.ok) {
+    const err = new Error(data?.error?.message || `OpenRouter error (status ${res.status})`);
+    err.status = res.status;
+    err.error = data?.error;
+    throw err;
+  }
+
+  return data;
+}
 
 // Confirmed free models — June 2026 (verified against openrouter.ai/collections/free-models)
 const TEXT_MODELS = [
+  "openrouter/owl-alpha",
+  "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "nex-agi/nex-n2-pro:free",
   "openai/gpt-oss-120b:free",
-  "z-ai/glm-4.5-air:free",
-  "nvidia/nemotron-3-super-120b-a12b:free",
-  "openai/gpt-oss-20b:free",
+  "google/gemma-4-31b:free",
 ];
 
 const VISION_MODELS = [
   "nvidia/nemotron-nano-12b-v2-vl:free",
-  "openai/gpt-oss-120b:free",
+  "google/gemma-4-31b:free",
+  "nex-agi/nex-n2-pro:free",
 ];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -36,29 +77,29 @@ function isRetryableNetworkError(err) {
     code === "ETIMEDOUT" ||
     code === "ENOTFOUND" ||
     message.includes("Premature close") ||
+    message.includes("fetch failed") ||
     message.includes("network") ||
     err.name === "APIConnectionTimeoutError" ||
-    err.name === "APIConnectionError"
+    err.name === "APIConnectionError" ||
+    err.name === "TypeError"
   );
 }
 
-async function callWithRetry(buildMessages, modelList, maxAttempts = 8) {
+async function callWithRetry(buildMessages, modelList, maxAttempts = 10) {
   let lastErr = null;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const model = modelList[attempt % modelList.length];
     try {
       const { messages, max_tokens, temperature } = buildMessages(model);
-      const response = await client.chat.completions.create({
-        model,
-        temperature: temperature ?? 0,
-        max_tokens: max_tokens ?? 800,
-        messages,
-      });
-      return response;
+      const data = await rawChatCompletion({ model, temperature, max_tokens, messages });
+      if (!data.choices || !data.choices[0]) {
+        throw new Error("No choices returned from model");
+      }
+      return data;
     } catch (err) {
       lastErr = err;
-      const status = err.status || err.code;
+      const status = err.status;
 
       // Skip unavailable/paid models immediately, try next
       if (status === 404) {
