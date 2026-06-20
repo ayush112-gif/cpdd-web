@@ -694,7 +694,9 @@ input[type="file"] { display: none; }
 // (http or https) correctly call the same backend without mixed-content.
 // Fallback to localhost:3000 when the origin is invalid (e.g. file://).
 const ORIGIN = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
-const API_FALLBACK = `http://${window.location.hostname}:${window.location.port || 3000}`;
+const HOSTNAME = window.location.hostname || 'localhost';
+const PORT = window.location.port || '3000';
+const API_FALLBACK = `http://${HOSTNAME}:${PORT}`;
 const API = ORIGIN || API_FALLBACK;
 
 let state = {
@@ -855,6 +857,7 @@ async function apiFetch(path, options = {}) {
   let lastErr = null;
   for (const url of urls) {
     try {
+      console.debug('[apiFetch] trying URL:', url, options);
       const res = await fetch(url, options);
       const ct = res.headers.get('content-type') || '';
       const text = await res.text();
@@ -873,6 +876,7 @@ async function apiFetch(path, options = {}) {
       // If server returns HTML or plain text instead of JSON, fail explicitly.
       throw new Error('Unexpected non-JSON response from server');
     } catch (err) {
+      console.warn('[apiFetch] failed URL:', url, 'error:', err.message);
       lastErr = err;
       // try next url
     }
