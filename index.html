@@ -690,7 +690,12 @@ input[type="file"] { display: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-const API = `http://${window.location.hostname}:${window.location.port || 3000}`;
+// Use the current origin (protocol + host + port) so deployed sites
+// (http or https) correctly call the same backend without mixed-content
+// or wrong-port issues. Keep the original http fallback variable for
+// debugging or deployments where an explicit host:port is required.
+const API_FALLBACK = `http://${window.location.hostname}:${window.location.port || 3000}`;
+const API = window.location.origin;
 
 let state = {
   mode: 'analyze',
