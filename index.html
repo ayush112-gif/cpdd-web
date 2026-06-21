@@ -598,11 +598,13 @@ input[type="file"] { display: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ✅ FIX: Use RELATIVE URLs (no http:// needed)
-// This works on both localhost:3000 AND deployed sites
-const API = ''; // Empty = relative URL to same origin
+// Backend API base URL — this is a plain HTML page (no build step / no Vite),
+// so we hardcode the deployed Render URL directly instead of using
+// import.meta.env (which only works inside a Vite-bundled app and was
+// causing "Cannot use 'import.meta' outside a module" errors here).
+const API = 'https://cpdd-web.onrender.com';
 
-console.log('[API] Using relative URLs to:', window.location.origin);
+console.log('[API] Using base URL:', API);
 
 let state = {
   mode: 'analyze',
@@ -727,7 +729,7 @@ async function analyzeNotice() {
   document.getElementById('loadingDesc').textContent = 'Reading your notice';
   
   try {
-    const res = await fetch('/api/analyze-notice', {
+    const res = await fetch(`${API}/api/analyze-notice`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
@@ -762,10 +764,13 @@ async function openMailModal() {
   document.getElementById('loadingDesc').textContent = 'One moment';
   
   try {
-    const res = await fetch('/api/generate-mail', {
+    const res = await fetch(`${API}/api/generate-mail`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
+      body: JSON.stringify({
+        originalText: state.originalText,
+        jobData: state.jobData
+      })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed to generate mail');
@@ -793,10 +798,13 @@ async function openMailModal() {
 async function generateWA() {
   if (!state.jobData) return;
   try {
-    const res = await fetch('/api/generate-whatsapp', {
+    const res = await fetch(`${API}/api/generate-whatsapp`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
+      body: JSON.stringify({
+        originalText: state.originalText,
+        jobData: state.jobData
+      })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed');
@@ -815,7 +823,7 @@ async function generateCustomAI() {
   document.getElementById('loadingDesc').textContent = 'Creating your mail';
   
   try {
-    const res = await fetch('/api/generate-custom-mail', {
+    const res = await fetch(`${API}/api/generate-custom-mail`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ instruction })
@@ -885,7 +893,7 @@ async function sendMailModal() {
       formData.append('attachments', file);
     });
     
-    const res = await fetch('/api/send-mail', {
+    const res = await fetch(`${API}/api/send-mail`, {
       method: 'POST',
       body: formData
     });
