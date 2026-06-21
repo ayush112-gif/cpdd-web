@@ -1,596 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Placement Agent - Mail Pro</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mail Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; height: 100%; }
-body { 
-  font-family: 'Inter', sans-serif; 
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-  color: #1f2937;
-  min-height: 100vh;
-  padding: 0;
-  overflow-x: hidden;
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --c1:#ff6b6b;--c2:#feca57;--c3:#48dbfb;--c4:#ff9ff3;--c5:#54a0ff;
+  --bg:#0d0d0d;
+  --glass:rgba(255,255,255,0.06);
+  --glass2:rgba(255,255,255,0.09);
+  --border:rgba(255,255,255,0.1);
+  --border2:rgba(255,255,255,0.18);
+  --text1:#ffffff;--text2:rgba(255,255,255,0.65);--text3:rgba(255,255,255,0.35);
+  --r8:8px;--r12:12px;--r16:16px;--r20:20px;
 }
-.container { 
-  max-width: 480px; 
-  margin: 0 auto; 
-  background: #fff; 
-  border-radius: 24px; 
-  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-  overflow: hidden;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+html,body{width:100%;height:100%;background:var(--bg);overflow-x:hidden;}
+body{font-family:'Inter',sans-serif;color:var(--text1);}
+
+/* ── ANIMATED BACKGROUND ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── ORBS floating ── */
+.orb{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;opacity:0.55;}
+.orb1{width:340px;height:340px;background:radial-gradient(circle,#ff6b6b,transparent 70%);top:-80px;left:-80px;animation:orbFloat1 9s ease-in-out infinite;}
+.orb2{width:280px;height:280px;background:radial-gradient(circle,#54a0ff,transparent 70%);top:20%;right:-60px;animation:orbFloat2 11s ease-in-out infinite;}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,#ff9ff3,transparent 70%);bottom:10%;left:10%;animation:orbFloat3 13s ease-in-out infinite;}
+.orb4{width:200px;height:200px;background:radial-gradient(circle,#feca57,transparent 70%);bottom:30%;right:5%;animation:orbFloat4 8s ease-in-out infinite;}
+
+@keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,30px) scale(1.08);}66%{transform:translate(-20px,50px) scale(0.95);}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1);}40%{transform:translate(-35px,40px) scale(1.1);}70%{transform:translate(20px,-30px) scale(0.92);}}
+@keyframes orbFloat3{0%,100%{transform:translate(0,0) scale(1);}30%{transform:translate(30px,-40px) scale(1.05);}65%{transform:translate(-20px,20px) scale(1.12);}}
+@keyframes orbFloat4{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-30px,-30px) scale(1.15);}}
+
+/* moving particles */
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.p{position:absolute;border-radius:50%;animation:pFloat linear infinite;}
+@keyframes pFloat{0%{transform:translateY(110vh) scale(0);opacity:0;}10%{opacity:1;}90%{opacity:0.6;}100%{transform:translateY(-10vh) scale(1);opacity:0;}}
+
+/* grid lines */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation:gridMove 20s linear infinite;
 }
-.header { 
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white; 
-  padding: 20px 20px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+@keyframes gridMove{0%{background-position:0 0,0 0;}100%{background-position:0 50px,50px 0;}}
+
+/* ── SHELL ── */
+.shell{
+  max-width:430px;margin:0 auto;min-height:100vh;
+  display:flex;flex-direction:column;
+  position:relative;z-index:1;
+  background:rgba(13,13,13,0.6);
+  backdrop-filter:blur(0px);
 }
-.header h1 { 
-  font-size: 24px; 
-  font-weight: 700;
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
+
+/* ── HEADER ── */
+.header{
+  padding:22px 18px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,0.03);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10;
+  backdrop-filter:blur(20px);
 }
-.header p { 
-  font-size: 12px; 
-  opacity: 0.9;
-  font-weight: 500;
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo-box{
+  width:40px;height:40px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--c1),var(--c4));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 20px rgba(255,107,107,0.4);
 }
-.content { 
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 40px;
+.logo-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);border-radius:12px;}
+.logo-text .t1{font-size:16px;font-weight:800;letter-spacing:-0.4px;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-text .t2{font-size:11px;color:var(--text3);font-weight:400;margin-top:1px;}
+.live-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;box-shadow:0 0 8px rgba(74,222,128,0.8);animation:livePulse 2s ease-in-out infinite;}
+@keyframes livePulse{0%,100%{box-shadow:0 0 8px rgba(74,222,128,0.8);}50%{box-shadow:0 0 16px rgba(74,222,128,1);}}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:18px 16px 48px;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+
+/* ── SECTION LABEL ── */
+.slabel{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:block;}
+
+/* ── MODE TABS ── */
+.mode-tabs{
+  display:grid;grid-template-columns:1fr 1fr;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:var(--r16);
+  padding:4px;gap:4px;margin-bottom:20px;
 }
-.section { margin-bottom: 20px; }
-.label { 
-  font-size: 11px; 
-  letter-spacing: 1px; 
-  text-transform: uppercase; 
-  color: #6b7280; 
-  font-weight: 700; 
-  margin-bottom: 12px;
-  display: block;
+.mode-tab{
+  padding:10px 0;border:none;background:transparent;
+  color:var(--text2);font-size:13px;font-weight:500;
+  border-radius:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all 0.3s ease;font-family:'Inter',sans-serif;
 }
-.tabs { 
-  display: flex; 
-  gap: 8px; 
-  margin-bottom: 16px;
+.mode-tab i{font-size:15px;}
+.mode-tab.active{
+  background:linear-gradient(135deg,var(--c1),var(--c4));
+  color:#fff;
+  box-shadow:0 4px 16px rgba(255,107,107,0.3);
 }
-.tab { 
-  flex: 1; 
-  padding: 10px 14px; 
-  border: 2px solid #e5e7eb; 
-  border-radius: 10px; 
-  background: white;
-  cursor: pointer; 
-  font-size: 12px; 
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #6b7280;
+
+/* ── INPUT TABS ── */
+.input-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.itab{
+  padding:7px 16px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text2);
+  border-radius:20px;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
 }
-.tab:hover { border-color: #10b981; }
-.tab.active { 
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white; 
-  border-color: #10b981;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-  transform: translateY(-2px);
+.itab.active{border-color:rgba(255,107,107,0.6);color:var(--c1);background:rgba(255,107,107,0.08);}
+
+/* ── TEXTAREA / INPUT ── */
+textarea,input[type="text"],input[type="email"]{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:var(--r12);
+  color:var(--text1);
+  font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.55;
+  margin-bottom:12px;transition:all 0.25s;resize:none;
 }
-.hidden { display: none !important; }
-textarea, input[type="text"], input[type="email"] { 
-  width: 100%; 
-  padding: 12px 14px; 
-  border: 2px solid #e5e7eb; 
-  border-radius: 12px; 
-  font-family: 'Inter'; 
-  font-size: 14px; 
-  margin-bottom: 12px;
-  transition: all 0.3s;
-  background: #f9fafb;
+textarea::placeholder,input::placeholder{color:var(--text3);}
+textarea:focus,input:focus{
+  outline:none;
+  border-color:rgba(255,107,107,0.5);
+  background:rgba(255,255,255,0.07);
+  box-shadow:0 0 0 3px rgba(255,107,107,0.1);
 }
-textarea:focus, input:focus { 
-  outline: none; 
-  border-color: #10b981;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+
+/* ── BUTTONS ── */
+.btn-primary{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--c1) 0%,var(--c4) 100%);
+  color:#fff;border:none;border-radius:var(--r12);
+  font-size:13px;font-weight:700;letter-spacing:0.2px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.3s ease;font-family:'Inter',sans-serif;
+  box-shadow:0 4px 18px rgba(255,107,107,0.28);
+  position:relative;overflow:hidden;
 }
-button { 
-  border: none; 
-  border-radius: 12px; 
-  font-weight: 600; 
-  cursor: pointer; 
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 13px; 
-  text-transform: uppercase; 
-  letter-spacing: 0.5px;
+.btn-primary::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
 }
-.btn-primary { 
-  width: 100%; 
-  padding: 14px; 
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,107,0.42);}
+.btn-primary:active{transform:translateY(0);}
+
+.btn-secondary{
+  width:100%;padding:11px;
+  background:rgba(255,255,255,0.06);
+  color:var(--text2);border:1px solid var(--border);
+  border-radius:var(--r12);font-size:13px;font-weight:500;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all 0.2s;font-family:'Inter',sans-serif;
 }
-.btn-primary:hover { 
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+.btn-secondary:hover{background:rgba(255,255,255,0.1);color:var(--text1);border-color:var(--border2);}
+
+.btn-wa{background:rgba(37,211,102,0.1);color:#4ade80;border-color:rgba(37,211,102,0.2);}
+.btn-wa:hover{background:rgba(37,211,102,0.18);color:#4ade80;}
+
+/* ── FILE UPLOAD ── */
+input[type="file"]{display:none;}
+.file-label{
+  display:block;padding:20px 16px;
+  border:1.5px dashed rgba(255,107,107,0.35);
+  border-radius:var(--r12);text-align:center;cursor:pointer;
+  transition:all 0.25s;background:rgba(255,107,107,0.05);
+  margin-bottom:12px;color:var(--c1);font-weight:600;font-size:13px;
 }
-.btn-primary:active { transform: translateY(0); }
-.btn-secondary {
-  width: 100%;
-  padding: 12px;
-  background: #f3f4f6;
-  color: #374151;
+.file-label:hover{border-color:var(--c1);background:rgba(255,107,107,0.1);}
+.file-label i{font-size:24px;display:block;margin-bottom:6px;}
+.file-name-text{font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px;}
+
+/* ── RESULT CARD ── */
+.result-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:var(--r20);overflow:hidden;margin-top:18px;
+  position:relative;
 }
-.btn-secondary:hover {
-  background: #e5e7eb;
-  transform: translateY(-1px);
+.result-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--c1),var(--c4),var(--c3),var(--c2));
+  background-size:200% auto;
+  animation:rainbowSlide 3s linear infinite;
 }
-.btn-small {
-  padding: 8px 12px;
-  font-size: 12px;
-  width: auto;
+@keyframes rainbowSlide{0%{background-position:0% center;}100%{background-position:200% center;}}
+
+.rcard-head{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;}
+.co-avatar{
+  width:44px;height:44px;min-width:44px;
+  background:linear-gradient(135deg,var(--c1),var(--c4));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:#fff;
+  box-shadow:0 0 16px rgba(255,107,107,0.35);
 }
-.slip { 
-  background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%);
-  border-left: 4px solid #10b981; 
-  padding: 16px; 
-  border-radius: 12px; 
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+.co-name{font-size:17px;font-weight:700;color:var(--text1);letter-spacing:-0.2px;}
+.co-role{font-size:12px;color:var(--text2);margin-top:3px;}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.fcell{padding:12px 14px;background:#0d0d0d;}
+.fkey{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-weight:700;margin-bottom:5px;}
+.fval{font-size:13px;font-weight:600;color:var(--text1);}
+.fval.green{color:#4ade80;}
+
+.sum-sec{padding:14px 16px;border-top:1px solid var(--border);}
+.sum-text{font-size:12.5px;line-height:1.7;color:var(--text2);}
+
+.act-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;border-top:1px solid var(--border);}
+.act-row .btn-secondary{padding:10px;}
+
+/* ── ATTACH ── */
+.attach-list{margin:10px 0;}
+.attach-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);border-radius:var(--r8);margin-bottom:7px;
 }
-.slip h3 { 
-  font-size: 18px; 
-  margin: 0 0 4px 0;
-  color: #059669;
-  font-weight: 700;
+.attach-item .ai-icon{font-size:15px;color:var(--c1);}
+.attach-item .aname{flex:1;font-size:12px;font-weight:500;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rm-btn{background:rgba(239,68,68,0.1);color:#f87171;border:none;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.rm-btn:hover{background:rgba(239,68,68,0.2);}
+
+.hidden{display:none!important;}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(12px);
+  display:none;align-items:flex-end;z-index:1000;
 }
-.slip p { 
-  font-size: 12px; 
-  color: #6b7280; 
-  margin: 2px 0;
+.modal-overlay.show{display:flex;}
+
+/* ── MODAL SHEET ── */
+.modal{
+  background:rgba(18,18,18,0.98);
+  border:1px solid var(--border);
+  border-radius:24px 24px 0 0;
+  border-top:1px solid rgba(255,255,255,0.12);
+  width:100%;max-height:92vh;overflow-y:auto;
+  animation:sheetUp 0.38s cubic-bezier(0.34,1.2,0.64,1);
 }
-.field-grid { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 12px; 
-  margin: 12px 0;
+@keyframes sheetUp{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+.drag-pill{width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:14px auto 0;}
+.mheader{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 16px;border-bottom:1px solid var(--border);}
+.mheader h2{font-size:17px;font-weight:700;color:var(--text1);}
+.close-btn{width:32px;height:32px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;transition:all 0.2s;}
+.close-btn:hover{background:rgba(255,255,255,0.1);color:var(--text1);}
+
+.mbody{padding:18px 20px;}
+
+.mail-wrap{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--r12);overflow:hidden;margin-bottom:14px;}
+.mail-subj{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:8px;}
+.mail-body-p{padding:12px 14px;font-size:12.5px;line-height:1.7;color:var(--text2);max-height:130px;overflow-y:auto;white-space:pre-wrap;}
+
+.edit-toggle{
+  width:100%;padding:9px;background:transparent;
+  border:1px dashed rgba(255,107,107,0.3);color:var(--c1);
+  border-radius:var(--r8);font-size:12px;font-weight:500;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all 0.2s;margin-bottom:14px;
 }
-.field { 
-  padding: 10px; 
-  background: white;
-  border-radius: 8px; 
-  border: 1px solid #e5e7eb;
+.edit-toggle:hover{background:rgba(255,107,107,0.08);}
+
+.textarea-edit{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(255,107,107,0.4);
+  border-radius:var(--r12);color:var(--text1);
+  font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;
+  min-height:120px;resize:vertical;margin-bottom:10px;
 }
-.field-label { 
-  font-size: 10px; 
-  text-transform: uppercase; 
-  color: #9ca3af; 
-  font-weight: 700;
-  display: block;
-  margin-bottom: 4px;
+.textarea-edit:focus{outline:none;box-shadow:0 0 0 3px rgba(255,107,107,0.12);}
+
+.edit-actions{display:flex;gap:8px;margin-bottom:14px;}
+.edit-actions button{flex:1;padding:9px;font-size:12px;}
+
+.mfooter{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--border);}
+.mfooter button{flex:1;}
+
+/* ── LOADING ── */
+.loading-inner{padding:50px 30px;display:flex;flex-direction:column;align-items:center;}
+.spinner{
+  width:44px;height:44px;
+  border:3px solid rgba(255,255,255,0.06);
+  border-top:3px solid var(--c1);
+  border-radius:50%;animation:spin 0.75s linear infinite;margin-bottom:20px;
 }
-.field-value { 
-  font-size: 13px; 
-  font-weight: 600; 
-  color: #059669;
+@keyframes spin{to{transform:rotate(360deg);}}
+.lt{font-size:15px;font-weight:600;color:var(--text1);margin-bottom:5px;}
+.ld{font-size:12px;color:var(--text3);}
+
+/* ── SUCCESS ── */
+.success-inner{padding:44px 30px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.sicon{
+  width:64px;height:64px;
+  background:rgba(74,222,128,0.1);
+  border:1px solid rgba(74,222,128,0.3);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:#4ade80;margin-bottom:20px;
+  animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 0 24px rgba(74,222,128,0.25);
 }
-.summary-box {
-  background: white;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  font-size: 12px;
-  line-height: 1.5;
-  margin: 12px 0;
-  color: #374151;
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.stitle{font-size:17px;font-weight:700;color:var(--text1);margin-bottom:6px;}
+.ssub{font-size:13px;color:var(--text3);}
+.done-btn{
+  margin-top:24px;padding:11px 36px;
+  background:linear-gradient(135deg,var(--c1),var(--c4));
+  border:none;border-radius:var(--r12);
+  color:#fff;font-size:13px;font-weight:700;
+  cursor:pointer;font-family:'Inter',sans-serif;
+  box-shadow:0 4px 18px rgba(255,107,107,0.3);transition:all 0.2s;
 }
-.action-row { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 10px; 
-  margin-top: 14px;
+.done-btn:hover{transform:translateY(-2px);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:rgba(30,30,30,0.95);
+  border:1px solid var(--border);
+  color:var(--text1);padding:11px 20px;border-radius:12px;
+  font-size:13px;font-weight:500;opacity:0;transition:all 0.3s ease;
+  z-index:9999;white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5);
+  backdrop-filter:blur(12px);
 }
-.action-row button { width: 100%; padding: 10px; }
-.toast { 
-  position: fixed; 
-  bottom: 20px; 
-  left: 50%; 
-  transform: translateX(-50%) translateY(100px);
-  background: #1f2937;
-  color: white; 
-  padding: 12px 20px; 
-  border-radius: 12px; 
-  font-size: 13px; 
-  opacity: 0; 
-  transition: all 0.3s;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-.toast.show { 
-  opacity: 1; 
-  transform: translateX(-50%) translateY(0);
-}
-input[type="file"] { display: none; }
-.file-label { 
-  display: block; 
-  padding: 16px; 
-  border: 2px dashed #10b981; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  text-align: center;
-  transition: all 0.3s;
-  margin-bottom: 12px;
-  background: #f0fdf4;
-  color: #059669;
-  font-weight: 600;
-}
-.file-label:hover { 
-  border-color: #059669;
-  background: #dcfce7;
-}
-.file-label i { font-size: 24px; display: block; margin-bottom: 6px; }
-.attach-list { margin: 12px 0; }
-.attach-item { 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  padding: 10px 12px; 
-  background: #f9fafb;
-  border-radius: 8px; 
-  margin-bottom: 8px;
-  border-left: 3px solid #10b981;
-}
-.attach-item .name { 
-  flex: 1; 
-  font-size: 12px; 
-  font-weight: 500;
-  color: #374151;
-}
-.attach-item button { width: auto; padding: 4px 8px; font-size: 11px; }
-.modal-overlay { 
-  position: fixed; 
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  background: rgba(0,0,0,0.5);
-  display: none; 
-  align-items: flex-end;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
-}
-.modal-overlay.show { display: flex; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal { 
-  background: white;
-  border-radius: 24px 24px 0 0;
-  padding: 24px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-}
-@keyframes slideUp { 
-  from { 
-    transform: translateY(100%); 
-    opacity: 0; 
-  } 
-  to { 
-    transform: translateY(0); 
-    opacity: 1; 
-  } 
-}
-.modal-header { 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #f3f4f6;
-}
-.modal-header h2 { 
-  font-size: 20px; 
-  color: #1f2937;
-  font-weight: 700;
-}
-.close-btn {
-  background: #f3f4f6;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-}
-.close-btn:hover { background: #e5e7eb; }
-.modal-body { margin: 16px 0; }
-.modal-footer { 
-  display: flex; 
-  gap: 10px; 
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 2px solid #f3f4f6;
-}
-.modal-footer button { flex: 1; }
-.mail-preview {
-  background: #f9fafb;
-  padding: 14px;
-  border-radius: 10px;
-  margin-bottom: 14px;
-  border: 1px solid #e5e7eb;
-}
-.mail-subject {
-  font-weight: 700;
-  color: #059669;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-.mail-body {
-  font-size: 12px;
-  line-height: 1.6;
-  color: #374151;
-  max-height: 120px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-}
-.loading-spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-}
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f3f4f6;
-  border-top: 4px solid #10b981;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin-bottom: 16px;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.loading-text {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-.loading-sub {
-  font-size: 12px;
-  color: #6b7280;
-}
-.success-icon {
-  width: 60px;
-  height: 60px;
-  background: #d1fae5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  margin: 20px auto;
-  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes scaleIn {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.success-text {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: #059669;
-  margin-bottom: 4px;
-}
-.success-sub {
-  text-align: center;
-  font-size: 13px;
-  color: #6b7280;
-}
-.edit-btn {
-  background: #eff6ff;
-  color: #0369a1;
-  border: 1px solid #bae6fd;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 10px;
-  width: 100%;
-}
-.edit-btn:hover {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
-}
-.textarea-edit {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #bae6fd;
-  border-radius: 10px;
-  font-family: 'Inter';
-  font-size: 13px;
-  margin-top: 10px;
-  min-height: 120px;
-}
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.section{margin-bottom:18px;}
 </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ANIMATED BG LAYERS -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="orb orb4"></div>
+<div class="grid-bg"></div>
+<div class="particles" id="particles"></div>
+
+<div class="shell">
+
   <div class="header">
-    <h1>📧 Mail Pro</h1>
-    <p>Professional Email Automation</p>
+    <div class="logo-wrap">
+      <div class="logo-box">✉</div>
+      <div class="logo-text">
+        <div class="t1">Mail Pro</div>
+        <div class="t2">Placement assistant</div>
+      </div>
+    </div>
+    <div class="live-dot"></div>
   </div>
 
   <div class="content">
+
     <div class="section">
-      <span class="label">Mode</span>
-      <div class="tabs">
-        <button class="tab active" onclick="switchMode('analyze')"><i class="ti ti-search"></i> Analyze</button>
-        <button class="tab" onclick="switchMode('custom')"><i class="ti ti-pencil"></i> Custom</button>
+      <div class="mode-tabs">
+        <button class="mode-tab active" onclick="switchMode('analyze')"><i class="ti ti-search"></i> Analyze</button>
+        <button class="mode-tab" onclick="switchMode('custom')"><i class="ti ti-pencil"></i> Custom</button>
       </div>
     </div>
 
-    <div id="analyze-mode" class="section">
-      <span class="label">Notice Input</span>
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('text')">Paste</button>
-        <button class="tab" onclick="switchTab('file')">Upload</button>
+    <!-- ANALYZE -->
+    <div id="analyze-mode">
+      <div class="section">
+        <span class="slabel">Input method</span>
+        <div class="input-tabs">
+          <button class="itab active" onclick="switchTab('text')">Paste text</button>
+          <button class="itab" onclick="switchTab('file')">Upload file</button>
+        </div>
+        <div id="text-input">
+          <textarea id="notice-text" placeholder="Paste job notice here…" rows="6"></textarea>
+        </div>
+        <div id="file-input" class="hidden">
+          <label class="file-label" for="file-upload">
+            <i class="ti ti-cloud-upload"></i>PDF or image
+          </label>
+          <input type="file" id="file-upload" accept=".pdf,image/*">
+          <div id="file-name" class="file-name-text"></div>
+        </div>
+        <button class="btn-primary" onclick="analyzeNotice()">
+          <i class="ti ti-bolt"></i> Analyze notice
+        </button>
       </div>
-      
-      <div id="text-input">
-        <textarea id="notice-text" placeholder="Paste job notice here..." rows="6"></textarea>
-      </div>
-      
-      <div id="file-input" class="hidden">
-        <label class="file-label" for="file-upload">
-          <i class="ti ti-cloud-upload"></i>
-          <span>PDF or Image</span>
-        </label>
-        <input type="file" id="file-upload" accept=".pdf,image/*">
-        <div id="file-name" style="font-size: 12px; color: #6b7280; text-align: center;"></div>
-      </div>
-
-      <button class="btn-primary" onclick="analyzeNotice()"><i class="ti ti-zap"></i> Analyze</button>
 
       <div id="slip-section" class="hidden">
-        <span class="label" style="margin-top: 16px;">Opportunity Details</span>
-        <div class="slip">
-          <h3 id="company-name">—</h3>
-          <p id="role-name">—</p>
+        <span class="slabel">Opportunity</span>
+        <div class="result-card">
+          <div class="rcard-head">
+            <div class="co-avatar" id="company-initial">?</div>
+            <div>
+              <div class="co-name" id="company-name">—</div>
+              <div class="co-role" id="role-name">—</div>
+            </div>
+          </div>
           <div class="field-grid">
-            <div class="field">
-              <span class="field-label">CTC</span>
-              <span class="field-value" id="ctc">—</span>
-            </div>
-            <div class="field">
-              <span class="field-label">Location</span>
-              <span class="field-value" id="location">—</span>
-            </div>
-            <div class="field">
-              <span class="field-label">Batch</span>
-              <span class="field-value" id="batch">—</span>
-            </div>
-            <div class="field">
-              <span class="field-label">Deadline</span>
-              <span class="field-value" id="deadline">—</span>
-            </div>
+            <div class="fcell"><div class="fkey">CTC</div><div class="fval green" id="ctc">—</div></div>
+            <div class="fcell"><div class="fkey">Location</div><div class="fval" id="location">—</div></div>
+            <div class="fcell"><div class="fkey">Batch</div><div class="fval" id="batch">—</div></div>
+            <div class="fcell"><div class="fkey">Deadline</div><div class="fval" id="deadline">—</div></div>
           </div>
-          <div class="summary-box">
-            <strong style="color: #059669;">Summary:</strong><br>
-            <span id="summary">—</span>
+          <div class="sum-sec">
+            <span class="slabel">Summary</span>
+            <div class="sum-text" id="summary">—</div>
           </div>
-          <div class="action-row">
-            <button class="btn-secondary" onclick="openMailModal()"><i class="ti ti-mail"></i> Mail</button>
-            <button class="btn-secondary" onclick="generateWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+          <div class="act-row">
+            <button class="btn-secondary" onclick="openMailModal()"><i class="ti ti-mail"></i> Draft mail</button>
+            <button class="btn-secondary btn-wa" onclick="generateWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="custom-mode" class="section hidden">
-      <span class="label">Custom Mail</span>
-      <div class="tabs">
-        <button class="tab active" onclick="switchCustomTab('ai')"><i class="ti ti-sparkles"></i> AI</button>
-        <button class="tab" onclick="switchCustomTab('manual')"><i class="ti ti-keyboard"></i> Manual</button>
-      </div>
-
-      <div id="ai-section">
-        <textarea id="custom-instruction" placeholder="What mail do you need?" rows="4"></textarea>
-        <button class="btn-primary" onclick="generateCustomAI()"><i class="ti ti-sparkles"></i> Generate</button>
-      </div>
-
-      <div id="manual-section" class="hidden">
-        <input type="text" id="manual-subject" placeholder="Subject">
-        <textarea id="manual-body" placeholder="Write your message..." rows="5"></textarea>
-        <button class="btn-primary" onclick="openManualMailModal()"><i class="ti ti-check"></i> Create</button>
+    <!-- CUSTOM -->
+    <div id="custom-mode" class="hidden">
+      <div class="section">
+        <div class="input-tabs">
+          <button class="itab active" onclick="switchCustomTab('ai')">AI generate</button>
+          <button class="itab" onclick="switchCustomTab('manual')">Write myself</button>
+        </div>
+        <div id="ai-section">
+          <textarea id="custom-instruction" placeholder="Describe the mail you need…" rows="5"></textarea>
+          <button class="btn-primary" onclick="generateCustomAI()"><i class="ti ti-sparkles"></i> Generate mail</button>
+        </div>
+        <div id="manual-section" class="hidden">
+          <input type="text" id="manual-subject" placeholder="Subject line">
+          <textarea id="manual-body" placeholder="Write your message…" rows="6"></textarea>
+          <button class="btn-primary" onclick="openManualMailModal()"><i class="ti ti-check"></i> Preview &amp; send</button>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 
+<!-- MAIL MODAL -->
 <div id="mailModal" class="modal-overlay">
   <div class="modal">
-    <div class="modal-header">
-      <h2>📧 Your Mail</h2>
-      <button class="close-btn" onclick="closeModal('mailModal')">✕</button>
+    <div class="drag-pill"></div>
+    <div class="mheader">
+      <h2>Draft mail</h2>
+      <button class="close-btn" onclick="closeModal('mailModal')"><i class="ti ti-x"></i></button>
     </div>
-    <div class="modal-body">
-      <div class="mail-preview">
-        <div class="mail-subject" id="modal-subject">Subject</div>
-        <div class="mail-body" id="modal-body">Body</div>
+    <div class="mbody">
+      <div class="mail-wrap">
+        <div class="mail-subj"><i class="ti ti-mail"></i><span id="modal-subject">Subject</span></div>
+        <div class="mail-body-p" id="modal-body">Body</div>
       </div>
-
-      <button class="edit-btn" onclick="toggleEditMode()"><i class="ti ti-edit"></i> Edit Mail</button>
-      
-      <div id="edit-section" class="hidden" style="margin-top: 12px;">
-        <textarea id="edit-body" class="textarea-edit" placeholder="Edit your mail..."></textarea>
-        <div style="display: flex; gap: 8px; margin-top: 10px;">
-          <button class="btn-secondary" style="flex: 1;" onclick="cancelEdit()">Cancel</button>
-          <button class="btn-primary" style="flex: 1;" onclick="saveEdit()">Save</button>
+      <button class="edit-toggle" onclick="toggleEditMode()"><i class="ti ti-edit"></i> Edit mail</button>
+      <div id="edit-section" class="hidden">
+        <textarea id="edit-body" class="textarea-edit" placeholder="Edit your mail…"></textarea>
+        <div class="edit-actions">
+          <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+          <button class="btn-primary" onclick="saveEdit()"><i class="ti ti-check"></i> Save</button>
         </div>
       </div>
-
-      <span class="label" style="margin-top: 16px;">Attachments (Up to 4)</span>
-      <label class="file-label" for="mail-attach-files" style="margin: 0 0 12px 0;">
-        <i class="ti ti-paperclip"></i>
-        <span>Click to Add Files</span>
+      <span class="slabel">Attachments <span style="color:var(--text3);font-weight:400;">(up to 4)</span></span>
+      <label class="file-label" for="mail-attach-files" style="padding:13px 16px;">
+        <i class="ti ti-paperclip" style="font-size:18px;display:inline;margin:0 6px 0 0;"></i> Add files
       </label>
       <input type="file" id="mail-attach-files" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,image/*">
       <div class="attach-list" id="mail-attach-list"></div>
-
-      <span class="label" style="margin-top: 16px;">Recipient</span>
-      <input type="email" id="modal-email" placeholder="Email address">
+      <span class="slabel">Recipient</span>
+      <input type="email" id="modal-email" placeholder="someone@example.com" style="margin-bottom:4px;">
     </div>
-
-    <div class="modal-footer">
+    <div class="mfooter">
       <button class="btn-secondary" onclick="closeModal('mailModal')">Cancel</button>
-      <button class="btn-primary" onclick="sendMailModal()"><i class="ti ti-send"></i> Send</button>
+      <button class="btn-primary" onclick="sendMailModal()"><i class="ti ti-send"></i> Send mail</button>
     </div>
   </div>
 </div>
 
+<!-- LOADING MODAL -->
 <div id="loadingModal" class="modal-overlay">
-  <div class="modal" style="max-height: none;">
-    <div class="loading-spinner">
+  <div class="modal">
+    <div class="drag-pill"></div>
+    <div class="loading-inner">
       <div class="spinner"></div>
-      <div class="loading-text" id="loadingText">Processing...</div>
-      <div class="loading-sub" id="loadingDesc">Please wait</div>
+      <div class="lt" id="loadingText">Processing…</div>
+      <div class="ld" id="loadingDesc">Please wait</div>
     </div>
   </div>
 </div>
 
+<!-- SUCCESS MODAL -->
 <div id="successModal" class="modal-overlay">
-  <div class="modal" style="max-height: none;">
-    <div style="text-align: center; padding: 20px 0;">
-      <div class="success-icon">✓</div>
-      <div class="success-text">Success!</div>
-      <div class="success-sub" id="successText">Mail sent successfully</div>
-      <button class="btn-primary" onclick="closeAllModals()" style="margin-top: 20px; width: 200px; margin-left: auto; margin-right: auto;">Done</button>
+  <div class="modal">
+    <div class="drag-pill"></div>
+    <div class="success-inner">
+      <div class="sicon"><i class="ti ti-check"></i></div>
+      <div class="stitle">Mail sent!</div>
+      <div class="ssub" id="successText">Delivered successfully.</div>
+      <button class="done-btn" onclick="closeAllModals()">Done</button>
     </div>
   </div>
 </div>
@@ -598,322 +523,166 @@ input[type="file"] { display: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-// Backend API base URL — this is a plain HTML page (no build step / no Vite),
-// so we hardcode the deployed Render URL directly instead of using
-// import.meta.env (which only works inside a Vite-bundled app and was
-// causing "Cannot use 'import.meta' outside a module" errors here).
-const API = 'https://cpdd-web.onrender.com';
+// ── particles ──
+(function(){
+  const c=document.getElementById('particles');
+  const cols=['#ff6b6b','#54a0ff','#ff9ff3','#feca57','#48dbfb','#1dd1a1'];
+  for(let i=0;i<22;i++){
+    const p=document.createElement('div');p.className='p';
+    const s=Math.random()*5+2;
+    p.style.cssText=`
+      width:${s}px;height:${s}px;
+      background:${cols[Math.floor(Math.random()*cols.length)]};
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*18+10}s;
+      animation-delay:${Math.random()*-20}s;
+      opacity:${Math.random()*0.5+0.2};
+      border-radius:50%;
+    `;
+    c.appendChild(p);
+  }
+})();
 
-console.log('[API] Using base URL:', API);
+// ── app logic ──
+const API='https://cpdd-web.onrender.com';
+let state={mode:'analyze',jobData:null,originalText:'',mailSubject:'',mailBody:'',originalMailBody:'',mailAttachedFiles:[],isEditMode:false};
 
-let state = {
-  mode: 'analyze',
-  jobData: null,
-  originalText: '',
-  mailSubject: '',
-  mailBody: '',
-  originalMailBody: '',
-  mailAttachedFiles: [],
-  isEditMode: false
-};
-
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
-}
-
-function showModal(id) {
-  document.getElementById(id).classList.add('show');
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
-}
-
-function closeAllModals() {
-  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
-  state.mailAttachedFiles = [];
-  state.isEditMode = false;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
+function showModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function closeAllModals(){
+  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('show'));
+  state.mailAttachedFiles=[];state.isEditMode=false;
   document.getElementById('edit-section').classList.add('hidden');
-  document.getElementById('mail-attach-list').innerHTML = '';
+  document.getElementById('mail-attach-list').innerHTML='';
 }
 
-function switchMode(mode) {
-  state.mode = mode;
-  document.getElementById('analyze-mode').classList.toggle('hidden', mode !== 'analyze');
-  document.getElementById('custom-mode').classList.toggle('hidden', mode !== 'custom');
-  document.querySelectorAll('.tabs')[0].querySelectorAll('.tab').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && mode === 'analyze') || (i === 1 && mode === 'custom'));
-  });
+function switchMode(mode){
+  state.mode=mode;
+  document.getElementById('analyze-mode').classList.toggle('hidden',mode!=='analyze');
+  document.getElementById('custom-mode').classList.toggle('hidden',mode!=='custom');
+  document.querySelectorAll('.mode-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='analyze')||(i===1&&mode==='custom')));
+}
+function switchTab(tab){
+  document.getElementById('text-input').classList.toggle('hidden',tab!=='text');
+  document.getElementById('file-input').classList.toggle('hidden',tab!=='file');
+  document.querySelectorAll('#analyze-mode .itab').forEach((b,i)=>b.classList.toggle('active',(i===0&&tab==='text')||(i===1&&tab==='file')));
+}
+function switchCustomTab(which){
+  document.getElementById('ai-section').classList.toggle('hidden',which!=='ai');
+  document.getElementById('manual-section').classList.toggle('hidden',which!=='manual');
+  document.querySelectorAll('#custom-mode .itab').forEach((b,i)=>b.classList.toggle('active',(i===0&&which==='ai')||(i===1&&which==='manual')));
 }
 
-function switchTab(tab) {
-  document.getElementById('text-input').classList.toggle('hidden', tab !== 'text');
-  document.getElementById('file-input').classList.toggle('hidden', tab !== 'file');
-  document.querySelectorAll('#analyze-mode .tabs')[0].querySelectorAll('.tab').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'text') || (i === 1 && tab === 'file'));
-  });
-}
-
-function switchCustomTab(which) {
-  document.getElementById('ai-section').classList.toggle('hidden', which !== 'ai');
-  document.getElementById('manual-section').classList.toggle('hidden', which !== 'manual');
-  document.querySelectorAll('#custom-mode .tabs')[0].querySelectorAll('.tab').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && which === 'ai') || (i === 1 && which === 'manual'));
-  });
-}
-
-document.getElementById('file-upload').addEventListener('change', e => {
-  document.getElementById('file-name').textContent = e.target.files[0]?.name || '';
-});
-
-document.getElementById('mail-attach-files').addEventListener('change', e => {
-  state.mailAttachedFiles = Array.from(e.target.files).slice(0, 4);
+document.getElementById('file-upload').addEventListener('change',e=>{document.getElementById('file-name').textContent=e.target.files[0]?.name||'';});
+document.getElementById('mail-attach-files').addEventListener('change',e=>{
+  state.mailAttachedFiles=Array.from(e.target.files).slice(0,4);
   renderMailAttachments();
-  if (state.mailAttachedFiles.length > 0) {
-    toast(`✓ ${state.mailAttachedFiles.length} file(s) added`);
-  }
-  e.target.value = '';
+  if(state.mailAttachedFiles.length>0)toast(`✓ ${state.mailAttachedFiles.length} file(s) added`);
+  e.target.value='';
 });
-
-function renderMailAttachments() {
-  const list = document.getElementById('mail-attach-list');
-  if (!state.mailAttachedFiles.length) {
-    list.innerHTML = '';
-    return;
-  }
-  list.innerHTML = state.mailAttachedFiles.map((f, i) => `
-    <div class="attach-item">
-      <span class="name">📎 ${f.name}</span>
-      <button class="btn-small btn-secondary" onclick="removeMailAttach(${i})">Remove</button>
-    </div>
-  `).join('');
+function renderMailAttachments(){
+  const list=document.getElementById('mail-attach-list');
+  if(!state.mailAttachedFiles.length){list.innerHTML='';return;}
+  list.innerHTML=state.mailAttachedFiles.map((f,i)=>`<div class="attach-item"><i class="ti ti-paperclip ai-icon"></i><span class="aname">${f.name}</span><button class="rm-btn" onclick="removeMailAttach(${i})">Remove</button></div>`).join('');
 }
+function removeMailAttach(i){state.mailAttachedFiles.splice(i,1);renderMailAttachments();}
+function toggleEditMode(){state.isEditMode=!state.isEditMode;document.getElementById('edit-section').classList.toggle('hidden');if(state.isEditMode)document.getElementById('edit-body').value=state.mailBody;}
+function cancelEdit(){state.isEditMode=false;document.getElementById('edit-section').classList.add('hidden');}
+function saveEdit(){const nb=document.getElementById('edit-body').value.trim();if(!nb){toast('❌ Body cannot be empty');return;}state.mailBody=nb;document.getElementById('modal-body').textContent=state.mailBody;state.isEditMode=false;document.getElementById('edit-section').classList.add('hidden');toast('✓ Mail updated');}
 
-function removeMailAttach(i) {
-  state.mailAttachedFiles.splice(i, 1);
-  renderMailAttachments();
-}
-
-function toggleEditMode() {
-  state.isEditMode = !state.isEditMode;
-  document.getElementById('edit-section').classList.toggle('hidden');
-  if (state.isEditMode) {
-    document.getElementById('edit-body').value = state.mailBody;
-  }
-}
-
-function cancelEdit() {
-  state.isEditMode = false;
-  document.getElementById('edit-section').classList.add('hidden');
-}
-
-function saveEdit() {
-  const newBody = document.getElementById('edit-body').value.trim();
-  if (!newBody) { toast('❌ Mail body cannot be empty'); return; }
-  state.mailBody = newBody;
-  document.getElementById('modal-body').textContent = state.mailBody;
-  state.isEditMode = false;
-  document.getElementById('edit-section').classList.add('hidden');
-  toast('✓ Mail updated');
-}
-
-async function analyzeNotice() {
-  const text = document.getElementById('notice-text').value.trim();
-  if (!text) { toast('❌ Paste or upload a notice'); return; }
-  
-  showModal('loadingModal');
-  document.getElementById('loadingText').textContent = 'Analyzing...';
-  document.getElementById('loadingDesc').textContent = 'Reading your notice';
-  
-  try {
-    const res = await fetch(`${API}/api/analyze-notice`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to analyze');
-
-    state.jobData = data.jobData;
-    state.originalText = text;
-
-    document.getElementById('company-name').textContent = data.jobData.company_name || '—';
-    document.getElementById('role-name').textContent = data.jobData.role || '—';
-    document.getElementById('ctc').textContent = data.jobData.ctc || '—';
-    document.getElementById('location').textContent = data.jobData.location || '—';
-    document.getElementById('batch').textContent = data.jobData.batch || '—';
-    document.getElementById('deadline').textContent = data.jobData.deadline || '—';
-    document.getElementById('summary').textContent = data.jobData.summary || '—';
+async function analyzeNotice(){
+  const text=document.getElementById('notice-text').value.trim();
+  if(!text){toast('❌ Paste or upload a notice');return;}
+  showModal('loadingModal');document.getElementById('loadingText').textContent='Analyzing notice…';document.getElementById('loadingDesc').textContent='Reading your job notice';
+  try{
+    const res=await fetch(`${API}/api/analyze-notice`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
+    state.jobData=data.jobData;state.originalText=text;
+    const co=data.jobData.company_name||'—';
+    document.getElementById('company-initial').textContent=co[0]||'?';
+    document.getElementById('company-name').textContent=co;
+    document.getElementById('role-name').textContent=data.jobData.role||'—';
+    document.getElementById('ctc').textContent=data.jobData.ctc||'—';
+    document.getElementById('location').textContent=data.jobData.location||'—';
+    document.getElementById('batch').textContent=data.jobData.batch||'—';
+    document.getElementById('deadline').textContent=data.jobData.deadline||'—';
+    document.getElementById('summary').textContent=data.jobData.summary||'—';
     document.getElementById('slip-section').classList.remove('hidden');
-    closeModal('loadingModal');
-    toast('✓ Analysis complete');
-  } catch (e) {
-    closeModal('loadingModal');
-    toast('❌ ' + e.message);
-  }
+    closeModal('loadingModal');toast('✓ Analysis complete');
+  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
 }
 
-async function openMailModal() {
-  if (!state.jobData) return;
-  
-  showModal('loadingModal');
-  document.getElementById('loadingText').textContent = 'Creating mail...';
-  document.getElementById('loadingDesc').textContent = 'One moment';
-  
-  try {
-    const res = await fetch(`${API}/api/generate-mail`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        originalText: state.originalText,
-        jobData: state.jobData
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to generate mail');
-
-    state.mailBody = data.mailDraft;
-    state.originalMailBody = data.mailDraft;
-    state.mailSubject = `[${state.jobData.company_name || 'Placement'}]`;
-    state.mailAttachedFiles = [];
-    
-    document.getElementById('modal-subject').textContent = state.mailSubject;
-    document.getElementById('modal-body').textContent = state.mailBody;
-    document.getElementById('mail-attach-list').innerHTML = '';
-    document.getElementById('modal-email').value = '';
-    document.getElementById('edit-section').classList.add('hidden');
-    state.isEditMode = false;
-    
-    closeModal('loadingModal');
-    showModal('mailModal');
-  } catch (e) {
-    closeModal('loadingModal');
-    toast('❌ ' + e.message);
-  }
+async function openMailModal(){
+  if(!state.jobData)return;
+  showModal('loadingModal');document.getElementById('loadingText').textContent='Drafting mail…';document.getElementById('loadingDesc').textContent='One moment';
+  try{
+    const res=await fetch(`${API}/api/generate-mail`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalText:state.originalText,jobData:state.jobData})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
+    state.mailBody=data.mailDraft;state.originalMailBody=data.mailDraft;
+    state.mailSubject=`[${state.jobData.company_name||'Placement'}]`;state.mailAttachedFiles=[];
+    document.getElementById('modal-subject').textContent=state.mailSubject;
+    document.getElementById('modal-body').textContent=state.mailBody;
+    document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
+    document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
+    closeModal('loadingModal');showModal('mailModal');
+  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
 }
 
-async function generateWA() {
-  if (!state.jobData) return;
-  try {
-    const res = await fetch(`${API}/api/generate-whatsapp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        originalText: state.originalText,
-        jobData: state.jobData
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed');
-    toast('✓ WhatsApp message created');
-  } catch (e) {
-    toast('❌ ' + e.message);
-  }
+async function generateWA(){
+  if(!state.jobData)return;
+  try{
+    const res=await fetch(`${API}/api/generate-whatsapp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalText:state.originalText,jobData:state.jobData})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
+    toast('✓ WhatsApp message ready');
+  }catch(e){toast('❌ '+e.message);}
 }
 
-async function generateCustomAI() {
-  const instruction = document.getElementById('custom-instruction').value.trim();
-  if (!instruction) { toast('❌ Tell me what you need'); return; }
-  
-  showModal('loadingModal');
-  document.getElementById('loadingText').textContent = 'Generating...';
-  document.getElementById('loadingDesc').textContent = 'Creating your mail';
-  
-  try {
-    const res = await fetch(`${API}/api/generate-custom-mail`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ instruction })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed');
-
-    state.mailBody = data.mailDraft;
-    state.originalMailBody = data.mailDraft;
-    state.mailSubject = 'Custom Mail';
-    state.jobData = {};
-    state.mailAttachedFiles = [];
-    
-    document.getElementById('modal-subject').textContent = state.mailSubject;
-    document.getElementById('modal-body').textContent = state.mailBody;
-    document.getElementById('mail-attach-list').innerHTML = '';
-    document.getElementById('modal-email').value = '';
-    document.getElementById('edit-section').classList.add('hidden');
-    state.isEditMode = false;
-    
-    closeModal('loadingModal');
-    showModal('mailModal');
-  } catch (e) {
-    closeModal('loadingModal');
-    toast('❌ ' + e.message);
-  }
+async function generateCustomAI(){
+  const instruction=document.getElementById('custom-instruction').value.trim();
+  if(!instruction){toast('❌ Describe what you need');return;}
+  showModal('loadingModal');document.getElementById('loadingText').textContent='Generating mail…';document.getElementById('loadingDesc').textContent='Creating your custom mail';
+  try{
+    const res=await fetch(`${API}/api/generate-custom-mail`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instruction})});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
+    state.mailBody=data.mailDraft;state.originalMailBody=data.mailDraft;
+    state.mailSubject='Custom mail';state.jobData={};state.mailAttachedFiles=[];
+    document.getElementById('modal-subject').textContent=state.mailSubject;
+    document.getElementById('modal-body').textContent=state.mailBody;
+    document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
+    document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
+    closeModal('loadingModal');showModal('mailModal');
+  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
 }
 
-function openManualMailModal() {
-  const subject = document.getElementById('manual-subject').value.trim();
-  const body = document.getElementById('manual-body').value.trim();
-  if (!subject || !body) { toast('❌ Enter subject and message'); return; }
-  
-  state.mailBody = body;
-  state.originalMailBody = body;
-  state.mailSubject = subject;
-  state.jobData = {};
-  state.mailAttachedFiles = [];
-  
-  document.getElementById('modal-subject').textContent = state.mailSubject;
-  document.getElementById('modal-body').textContent = state.mailBody;
-  document.getElementById('mail-attach-list').innerHTML = '';
-  document.getElementById('modal-email').value = '';
-  document.getElementById('edit-section').classList.add('hidden');
-  state.isEditMode = false;
-  
+function openManualMailModal(){
+  const subject=document.getElementById('manual-subject').value.trim();
+  const body=document.getElementById('manual-body').value.trim();
+  if(!subject||!body){toast('❌ Enter subject and message');return;}
+  state.mailBody=body;state.originalMailBody=body;state.mailSubject=subject;state.jobData={};state.mailAttachedFiles=[];
+  document.getElementById('modal-subject').textContent=state.mailSubject;
+  document.getElementById('modal-body').textContent=state.mailBody;
+  document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
+  document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
   showModal('mailModal');
 }
 
-async function sendMailModal() {
-  const to = document.getElementById('modal-email').value.trim();
-  if (!to || !to.includes('@')) { toast('❌ Enter valid email'); return; }
-  if (!state.mailBody) { toast('❌ Mail is empty'); return; }
-  
-  showModal('loadingModal');
-  document.getElementById('loadingText').textContent = 'Sending...';
-  document.getElementById('loadingDesc').textContent = to;
-  
-  try {
-    const formData = new FormData();
-    formData.append('to', to);
-    formData.append('subject', state.mailSubject);
-    formData.append('body', state.mailBody);
-    formData.append('jobData', JSON.stringify(state.jobData || {}));
-    
-    state.mailAttachedFiles.forEach(file => {
-      formData.append('attachments', file);
-    });
-    
-    const res = await fetch(`${API}/api/send-mail`, {
-      method: 'POST',
-      body: formData
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to send');
-
-    closeModal('loadingModal');
-    showModal('successModal');
-    document.getElementById('successText').textContent = `✓ Sent to ${to}`;
-    
-    setTimeout(() => {
-      closeAllModals();
-    }, 2000);
-    
-  } catch (e) {
-    closeModal('loadingModal');
-    toast('❌ ' + e.message);
-  }
+async function sendMailModal(){
+  const to=document.getElementById('modal-email').value.trim();
+  if(!to||!to.includes('@')){toast('❌ Enter a valid email');return;}
+  if(!state.mailBody){toast('❌ Mail is empty');return;}
+  showModal('loadingModal');document.getElementById('loadingText').textContent='Sending…';document.getElementById('loadingDesc').textContent=to;
+  try{
+    const fd=new FormData();
+    fd.append('to',to);fd.append('subject',state.mailSubject);fd.append('body',state.mailBody);fd.append('jobData',JSON.stringify(state.jobData||{}));
+    state.mailAttachedFiles.forEach(f=>fd.append('attachments',f));
+    const res=await fetch(`${API}/api/send-mail`,{method:'POST',body:fd});
+    const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
+    closeModal('loadingModal');showModal('successModal');
+    document.getElementById('successText').textContent=`Delivered to ${to}`;
+    setTimeout(()=>closeAllModals(),2200);
+  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
 }
 </script>
-
 </body>
 </html>
