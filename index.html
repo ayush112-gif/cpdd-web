@@ -17,7 +17,6 @@ body {
   padding: 0;
   overflow-x: hidden;
 }
-
 .container { 
   max-width: 480px; 
   margin: 0 auto; 
@@ -29,7 +28,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 .header { 
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white; 
@@ -37,29 +35,24 @@ body {
   text-align: center;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
-
 .header h1 { 
   font-size: 24px; 
   font-weight: 700;
   margin-bottom: 4px;
   letter-spacing: -0.5px;
 }
-
 .header p { 
   font-size: 12px; 
   opacity: 0.9;
   font-weight: 500;
 }
-
 .content { 
   flex: 1;
   overflow-y: auto;
   padding: 20px;
   padding-bottom: 40px;
 }
-
 .section { margin-bottom: 20px; }
-
 .label { 
   font-size: 11px; 
   letter-spacing: 1px; 
@@ -69,13 +62,11 @@ body {
   margin-bottom: 12px;
   display: block;
 }
-
 .tabs { 
   display: flex; 
   gap: 8px; 
   margin-bottom: 16px;
 }
-
 .tab { 
   flex: 1; 
   padding: 10px 14px; 
@@ -88,9 +79,7 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #6b7280;
 }
-
 .tab:hover { border-color: #10b981; }
-
 .tab.active { 
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white; 
@@ -98,9 +87,7 @@ body {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   transform: translateY(-2px);
 }
-
 .hidden { display: none !important; }
-
 textarea, input[type="text"], input[type="email"] { 
   width: 100%; 
   padding: 12px 14px; 
@@ -112,14 +99,12 @@ textarea, input[type="text"], input[type="email"] {
   transition: all 0.3s;
   background: #f9fafb;
 }
-
 textarea:focus, input:focus { 
   outline: none; 
   border-color: #10b981;
   background: white;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
-
 button { 
   border: none; 
   border-radius: 12px; 
@@ -130,7 +115,6 @@ button {
   text-transform: uppercase; 
   letter-spacing: 0.5px;
 }
-
 .btn-primary { 
   width: 100%; 
   padding: 14px; 
@@ -138,32 +122,26 @@ button {
   color: white;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
-
 .btn-primary:hover { 
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
 }
-
 .btn-primary:active { transform: translateY(0); }
-
 .btn-secondary {
   width: 100%;
   padding: 12px;
   background: #f3f4f6;
   color: #374151;
 }
-
 .btn-secondary:hover {
   background: #e5e7eb;
   transform: translateY(-1px);
 }
-
 .btn-small {
   padding: 8px 12px;
   font-size: 12px;
   width: auto;
 }
-
 .slip { 
   background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%);
   border-left: 4px solid #10b981; 
@@ -172,34 +150,29 @@ button {
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
 }
-
 .slip h3 { 
   font-size: 18px; 
   margin: 0 0 4px 0;
   color: #059669;
   font-weight: 700;
 }
-
 .slip p { 
   font-size: 12px; 
   color: #6b7280; 
   margin: 2px 0;
 }
-
 .field-grid { 
   display: grid; 
   grid-template-columns: 1fr 1fr; 
   gap: 12px; 
   margin: 12px 0;
 }
-
 .field { 
   padding: 10px; 
   background: white;
   border-radius: 8px; 
   border: 1px solid #e5e7eb;
 }
-
 .field-label { 
   font-size: 10px; 
   text-transform: uppercase; 
@@ -208,13 +181,11 @@ button {
   display: block;
   margin-bottom: 4px;
 }
-
 .field-value { 
   font-size: 13px; 
   font-weight: 600; 
   color: #059669;
 }
-
 .summary-box {
   background: white;
   padding: 12px;
@@ -225,16 +196,13 @@ button {
   margin: 12px 0;
   color: #374151;
 }
-
 .action-row { 
   display: grid; 
   grid-template-columns: 1fr 1fr; 
   gap: 10px; 
   margin-top: 14px;
 }
-
 .action-row button { width: 100%; padding: 10px; }
-
 .toast { 
   position: fixed; 
   bottom: 20px; 
@@ -250,14 +218,11 @@ button {
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-
 .toast.show { 
   opacity: 1; 
   transform: translateX(-50%) translateY(0);
 }
-
 input[type="file"] { display: none; }
-
 .file-label { 
   display: block; 
   padding: 16px; 
@@ -271,16 +236,12 @@ input[type="file"] { display: none; }
   color: #059669;
   font-weight: 600;
 }
-
 .file-label:hover { 
   border-color: #059669;
   background: #dcfce7;
 }
-
 .file-label i { font-size: 24px; display: block; margin-bottom: 6px; }
-
 .attach-list { margin: 12px 0; }
-
 .attach-item { 
   display: flex; 
   justify-content: space-between; 
@@ -291,17 +252,13 @@ input[type="file"] { display: none; }
   margin-bottom: 8px;
   border-left: 3px solid #10b981;
 }
-
 .attach-item .name { 
   flex: 1; 
   font-size: 12px; 
   font-weight: 500;
   color: #374151;
 }
-
 .attach-item button { width: auto; padding: 4px 8px; font-size: 11px; }
-
-/* MODAL STYLES */
 .modal-overlay { 
   position: fixed; 
   top: 0; 
@@ -314,11 +271,8 @@ input[type="file"] { display: none; }
   z-index: 1000;
   animation: fadeIn 0.3s ease-out;
 }
-
 .modal-overlay.show { display: flex; }
-
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
 .modal { 
   background: white;
   border-radius: 24px 24px 0 0;
@@ -329,7 +283,6 @@ input[type="file"] { display: none; }
   animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 }
-
 @keyframes slideUp { 
   from { 
     transform: translateY(100%); 
@@ -340,7 +293,6 @@ input[type="file"] { display: none; }
     opacity: 1; 
   } 
 }
-
 .modal-header { 
   display: flex;
   justify-content: space-between;
@@ -349,13 +301,11 @@ input[type="file"] { display: none; }
   padding-bottom: 16px;
   border-bottom: 2px solid #f3f4f6;
 }
-
 .modal-header h2 { 
   font-size: 20px; 
   color: #1f2937;
   font-weight: 700;
 }
-
 .close-btn {
   background: #f3f4f6;
   border: none;
@@ -368,11 +318,8 @@ input[type="file"] { display: none; }
   justify-content: center;
   transition: all 0.3s;
 }
-
 .close-btn:hover { background: #e5e7eb; }
-
 .modal-body { margin: 16px 0; }
-
 .modal-footer { 
   display: flex; 
   gap: 10px; 
@@ -380,9 +327,7 @@ input[type="file"] { display: none; }
   padding-top: 16px;
   border-top: 2px solid #f3f4f6;
 }
-
 .modal-footer button { flex: 1; }
-
 .mail-preview {
   background: #f9fafb;
   padding: 14px;
@@ -390,14 +335,12 @@ input[type="file"] { display: none; }
   margin-bottom: 14px;
   border: 1px solid #e5e7eb;
 }
-
 .mail-subject {
   font-weight: 700;
   color: #059669;
   margin-bottom: 8px;
   font-size: 14px;
 }
-
 .mail-body {
   font-size: 12px;
   line-height: 1.6;
@@ -406,8 +349,6 @@ input[type="file"] { display: none; }
   overflow-y: auto;
   white-space: pre-wrap;
 }
-
-/* LOADING ANIMATION */
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -415,7 +356,6 @@ input[type="file"] { display: none; }
   justify-content: center;
   padding: 40px 20px;
 }
-
 .spinner {
   width: 50px;
   height: 50px;
@@ -425,24 +365,19 @@ input[type="file"] { display: none; }
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
 }
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-
 .loading-text {
   font-size: 16px;
   font-weight: 600;
   color: #1f2937;
   margin-bottom: 4px;
 }
-
 .loading-sub {
   font-size: 12px;
   color: #6b7280;
 }
-
-/* SUCCESS STATE */
 .success-icon {
   width: 60px;
   height: 60px;
@@ -455,12 +390,10 @@ input[type="file"] { display: none; }
   margin: 20px auto;
   animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-
 @keyframes scaleIn {
   from { transform: scale(0); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-
 .success-text {
   text-align: center;
   font-size: 16px;
@@ -468,14 +401,11 @@ input[type="file"] { display: none; }
   color: #059669;
   margin-bottom: 4px;
 }
-
 .success-sub {
   text-align: center;
   font-size: 13px;
   color: #6b7280;
 }
-
-/* EDIT BUTTON */
 .edit-btn {
   background: #eff6ff;
   color: #0369a1;
@@ -488,12 +418,10 @@ input[type="file"] { display: none; }
   margin-top: 10px;
   width: 100%;
 }
-
 .edit-btn:hover {
   background: #e0f2fe;
   border-color: #7dd3fc;
 }
-
 .textarea-edit {
   width: 100%;
   padding: 12px;
@@ -504,23 +432,10 @@ input[type="file"] { display: none; }
   margin-top: 10px;
   min-height: 120px;
 }
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 </style>
 </head>
 <body>
@@ -532,7 +447,6 @@ input[type="file"] { display: none; }
   </div>
 
   <div class="content">
-    <!-- MODE SELECTOR -->
     <div class="section">
       <span class="label">Mode</span>
       <div class="tabs">
@@ -541,7 +455,6 @@ input[type="file"] { display: none; }
       </div>
     </div>
 
-    <!-- ANALYZE MODE -->
     <div id="analyze-mode" class="section">
       <span class="label">Notice Input</span>
       <div class="tabs">
@@ -564,7 +477,6 @@ input[type="file"] { display: none; }
 
       <button class="btn-primary" onclick="analyzeNotice()"><i class="ti ti-zap"></i> Analyze</button>
 
-      <!-- EXTRACTED DATA -->
       <div id="slip-section" class="hidden">
         <span class="label" style="margin-top: 16px;">Opportunity Details</span>
         <div class="slip">
@@ -600,7 +512,6 @@ input[type="file"] { display: none; }
       </div>
     </div>
 
-    <!-- CUSTOM MODE -->
     <div id="custom-mode" class="section hidden">
       <span class="label">Custom Mail</span>
       <div class="tabs">
@@ -609,7 +520,7 @@ input[type="file"] { display: none; }
       </div>
 
       <div id="ai-section">
-        <textarea id="custom-instruction" placeholder="What mail do you need?&#10;e.g., Event reschedule, interview reminder" rows="4"></textarea>
+        <textarea id="custom-instruction" placeholder="What mail do you need?" rows="4"></textarea>
         <button class="btn-primary" onclick="generateCustomAI()"><i class="ti ti-sparkles"></i> Generate</button>
       </div>
 
@@ -622,7 +533,6 @@ input[type="file"] { display: none; }
   </div>
 </div>
 
-<!-- MAIL MODAL -->
 <div id="mailModal" class="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -664,7 +574,6 @@ input[type="file"] { display: none; }
   </div>
 </div>
 
-<!-- LOADING MODAL -->
 <div id="loadingModal" class="modal-overlay">
   <div class="modal" style="max-height: none;">
     <div class="loading-spinner">
@@ -675,7 +584,6 @@ input[type="file"] { display: none; }
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
 <div id="successModal" class="modal-overlay">
   <div class="modal" style="max-height: none;">
     <div style="text-align: center; padding: 20px 0;">
@@ -690,14 +598,11 @@ input[type="file"] { display: none; }
 <div class="toast" id="toast"></div>
 
 <script>
-// Use the current origin (protocol + host + port) so deployed sites
-// (http or https) correctly call the same backend without mixed-content.
-// Fallback to localhost:3000 when the origin is invalid (e.g. file://).
-const ORIGIN = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
-const HOSTNAME = window.location.hostname || 'localhost';
-const PORT = window.location.port || '3000';
-const API_FALLBACK = `http://${HOSTNAME}:${PORT}`;
-const API = ORIGIN || API_FALLBACK;
+// ✅ FIX: Use RELATIVE URLs (no http:// needed)
+// This works on both localhost:3000 AND deployed sites
+const API = ''; // Empty = relative URL to same origin
+
+console.log('[API] Using relative URLs to:', window.location.origin);
 
 let state = {
   mode: 'analyze',
@@ -822,12 +727,13 @@ async function analyzeNotice() {
   document.getElementById('loadingDesc').textContent = 'Reading your notice';
   
   try {
-    const data = await apiFetch('/api/analyze-notice', {
+    const res = await fetch('/api/analyze-notice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
     });
-    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to analyze');
 
     state.jobData = data.jobData;
     state.originalText = text;
@@ -848,42 +754,6 @@ async function analyzeNotice() {
   }
 }
 
-// Helper: fetch with fallback and safe JSON parsing
-async function apiFetch(path, options = {}) {
-  const urls = [];
-  if (API) urls.push(API + path);
-  if (API_FALLBACK) urls.push(API_FALLBACK + path);
-
-  let lastErr = null;
-  for (const url of urls) {
-    try {
-      console.debug('[apiFetch] trying URL:', url, options);
-      const res = await fetch(url, options);
-      const ct = res.headers.get('content-type') || '';
-      const text = await res.text();
-      if (!res.ok) {
-        // Try to extract a JSON error, otherwise throw the text
-        try {
-          const parsed = JSON.parse(text);
-          throw new Error(parsed.error || parsed.message || JSON.stringify(parsed));
-        } catch (_) {
-          throw new Error(text || res.statusText || `HTTP ${res.status}`);
-        }
-      }
-      if (ct.includes('application/json') || ct.includes('+json')) {
-        try { return JSON.parse(text); } catch (err) { throw new Error('Invalid JSON response: ' + text); }
-      }
-      // If server returns HTML or plain text instead of JSON, fail explicitly.
-      throw new Error('Unexpected non-JSON response from server');
-    } catch (err) {
-      console.warn('[apiFetch] failed URL:', url, 'error:', err.message);
-      lastErr = err;
-      // try next url
-    }
-  }
-  throw lastErr || new Error('Network error');
-}
-
 async function openMailModal() {
   if (!state.jobData) return;
   
@@ -892,12 +762,13 @@ async function openMailModal() {
   document.getElementById('loadingDesc').textContent = 'One moment';
   
   try {
-    const data = await apiFetch('/api/generate-mail', {
+    const res = await fetch('/api/generate-mail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
     });
-    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate mail');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to generate mail');
 
     state.mailBody = data.mailDraft;
     state.originalMailBody = data.mailDraft;
@@ -922,12 +793,13 @@ async function openMailModal() {
 async function generateWA() {
   if (!state.jobData) return;
   try {
-    const data = await apiFetch('/api/generate-whatsapp', {
+    const res = await fetch('/api/generate-whatsapp', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ originalText: state.originalText, jobData: state.jobData })
     });
-    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate WhatsApp');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
     toast('✓ WhatsApp message created');
   } catch (e) {
     toast('❌ ' + e.message);
@@ -943,12 +815,13 @@ async function generateCustomAI() {
   document.getElementById('loadingDesc').textContent = 'Creating your mail';
   
   try {
-    const data = await apiFetch('/api/generate-custom-mail', {
+    const res = await fetch('/api/generate-custom-mail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ instruction })
     });
-    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to generate custom mail');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
 
     state.mailBody = data.mailDraft;
     state.originalMailBody = data.mailDraft;
@@ -1012,11 +885,12 @@ async function sendMailModal() {
       formData.append('attachments', file);
     });
     
-    const data = await apiFetch('/api/send-mail', {
+    const res = await fetch('/api/send-mail', {
       method: 'POST',
       body: formData
     });
-    if (!data || data.error) throw new Error(data?.error || (data && data.text) || 'Failed to send mail');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to send');
 
     closeModal('loadingModal');
     showModal('successModal');
