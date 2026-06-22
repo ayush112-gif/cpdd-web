@@ -2,566 +2,651 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Mail Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --c1:#ff6b6b;--c2:#feca57;--c3:#48dbfb;--c4:#ff9ff3;--c5:#54a0ff;
-  --bg:#0d0d0d;
-  --glass:rgba(255,255,255,0.06);
-  --glass2:rgba(255,255,255,0.09);
-  --border:rgba(255,255,255,0.1);
-  --border2:rgba(255,255,255,0.18);
-  --text1:#ffffff;--text2:rgba(255,255,255,0.65);--text3:rgba(255,255,255,0.35);
-  --r8:8px;--r12:12px;--r16:16px;--r20:20px;
+  --c1:#ff6b6b;--c2:#feca57;--c3:#48dbfb;--c4:#ff9ff3;--c5:#54a0ff;--c6:#1dd1a1;
+  --bg:#080810;
+  --s1:#0f0f1a;--s2:#13131f;--s3:#181826;
+  --bdr:rgba(255,255,255,0.08);--bdr2:rgba(255,255,255,0.15);
+  --t1:#ffffff;--t2:rgba(255,255,255,0.62);--t3:rgba(255,255,255,0.3);
 }
-html,body{width:100%;height:100%;background:var(--bg);overflow-x:hidden;}
-body{font-family:'Inter',sans-serif;color:var(--text1);}
+html,body{height:100%;background:var(--bg);overflow-x:hidden;font-family:'Inter',sans-serif;color:var(--t1);}
 
-/* ── ANIMATED BACKGROUND ── */
-#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ═══ BG ═══ */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;will-change:transform;}
+.o1{width:380px;height:380px;background:radial-gradient(circle,rgba(255,107,107,0.5),transparent 68%);top:-100px;left:-100px;animation:oa 10s ease-in-out infinite;}
+.o2{width:320px;height:320px;background:radial-gradient(circle,rgba(84,160,255,0.45),transparent 68%);top:25%;right:-80px;animation:ob 12s ease-in-out infinite;}
+.o3{width:350px;height:350px;background:radial-gradient(circle,rgba(255,159,243,0.42),transparent 68%);bottom:5%;left:0;animation:oc 14s ease-in-out infinite;}
+.o4{width:250px;height:250px;background:radial-gradient(circle,rgba(254,202,87,0.4),transparent 68%);bottom:30%;right:-20px;animation:od 9s ease-in-out infinite;}
+@keyframes oa{0%,100%{transform:translate(0,0)}40%{transform:translate(50px,40px)}70%{transform:translate(-20px,60px)}}
+@keyframes ob{0%,100%{transform:translate(0,0)}35%{transform:translate(-45px,50px)}70%{transform:translate(30px,-40px)}}
+@keyframes oc{0%,100%{transform:translate(0,0)}33%{transform:translate(40px,-50px)}66%{transform:translate(-30px,30px)}}
+@keyframes od{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-40px)}}
 
-/* ── ORBS floating ── */
-.orb{position:fixed;border-radius:50%;filter:blur(70px);pointer-events:none;z-index:0;opacity:0.55;}
-.orb1{width:340px;height:340px;background:radial-gradient(circle,#ff6b6b,transparent 70%);top:-80px;left:-80px;animation:orbFloat1 9s ease-in-out infinite;}
-.orb2{width:280px;height:280px;background:radial-gradient(circle,#54a0ff,transparent 70%);top:20%;right:-60px;animation:orbFloat2 11s ease-in-out infinite;}
-.orb3{width:300px;height:300px;background:radial-gradient(circle,#ff9ff3,transparent 70%);bottom:10%;left:10%;animation:orbFloat3 13s ease-in-out infinite;}
-.orb4{width:200px;height:200px;background:radial-gradient(circle,#feca57,transparent 70%);bottom:30%;right:5%;animation:orbFloat4 8s ease-in-out infinite;}
+.grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);
+  background-size:48px 48px;animation:gs 24s linear infinite;}
+@keyframes gs{0%{background-position:0 0,0 0}100%{background-position:0 48px,48px 0}}
 
-@keyframes orbFloat1{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,30px) scale(1.08);}66%{transform:translate(-20px,50px) scale(0.95);}}
-@keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1);}40%{transform:translate(-35px,40px) scale(1.1);}70%{transform:translate(20px,-30px) scale(0.92);}}
-@keyframes orbFloat3{0%,100%{transform:translate(0,0) scale(1);}30%{transform:translate(30px,-40px) scale(1.05);}65%{transform:translate(-20px,20px) scale(1.12);}}
-@keyframes orbFloat4{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(-30px,-30px) scale(1.15);}}
+.pts{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.pt{position:absolute;border-radius:50%;animation:pu linear infinite;}
+@keyframes pu{0%{transform:translateY(105vh);opacity:0}8%{opacity:1}88%{opacity:.5}100%{transform:translateY(-8vh);opacity:0}}
 
-/* moving particles */
-.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-.p{position:absolute;border-radius:50%;animation:pFloat linear infinite;}
-@keyframes pFloat{0%{transform:translateY(110vh) scale(0);opacity:0;}10%{opacity:1;}90%{opacity:0.6;}100%{transform:translateY(-10vh) scale(1);opacity:0;}}
+/* ═══ SHELL ═══ */
+.shell{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;z-index:1;background:rgba(8,8,16,0.52);}
 
-/* grid lines */
-.grid-bg{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
-  background-size:50px 50px;
-  animation:gridMove 20s linear infinite;
+/* ═══ HEADER ═══ */
+.hdr{
+  position:sticky;top:0;z-index:20;
+  background:rgba(8,8,16,0.7);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border-bottom:1px solid var(--bdr);
+  overflow:hidden;
 }
-@keyframes gridMove{0%{background-position:0 0,0 0;}100%{background-position:0 50px,50px 0;}}
+/* header animated deco */
+.hdr-deco{position:absolute;inset:0;pointer-events:none;}
+.hdr-inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:13px 18px 11px;}
 
-/* ── SHELL ── */
-.shell{
-  max-width:430px;margin:0 auto;min-height:100vh;
-  display:flex;flex-direction:column;
-  position:relative;z-index:1;
-  background:rgba(13,13,13,0.6);
-  backdrop-filter:blur(0px);
-}
-
-/* ── HEADER ── */
-.header{
-  padding:22px 18px 16px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(255,255,255,0.03);
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:10;
-  backdrop-filter:blur(20px);
-}
-.logo-wrap{display:flex;align-items:center;gap:12px;}
-.logo-box{
-  width:40px;height:40px;
-  border-radius:12px;
-  background:linear-gradient(135deg,var(--c1),var(--c4));
+/* logo mark — animated envelope */
+.logo-mark{
+  width:46px;height:46px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(145deg,#1a0a25,#0e0e22);
+  border:1px solid rgba(255,107,107,0.35);
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;
   position:relative;overflow:hidden;
-  box-shadow:0 0 20px rgba(255,107,107,0.4);
+  box-shadow:0 0 24px rgba(255,107,107,0.3),inset 0 1px 0 rgba(255,255,255,0.08);
 }
-.logo-box::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);border-radius:12px;}
-.logo-text .t1{font-size:16px;font-weight:800;letter-spacing:-0.4px;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.logo-text .t2{font-size:11px;color:var(--text3);font-weight:400;margin-top:1px;}
-.live-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;box-shadow:0 0 8px rgba(74,222,128,0.8);animation:livePulse 2s ease-in-out infinite;}
-@keyframes livePulse{0%,100%{box-shadow:0 0 8px rgba(74,222,128,0.8);}50%{box-shadow:0 0 16px rgba(74,222,128,1);}}
+.logo-mark::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(255,159,243,0.08));border-radius:14px;}
+.logo-svg{width:26px;height:26px;position:relative;z-index:1;}
 
-/* ── CONTENT ── */
-.content{flex:1;overflow-y:auto;padding:18px 16px 48px;}
+/* brand name */
+.brand{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.5px;line-height:1;
+  background:linear-gradient(100deg,#fff 0%,#ffd6d6 35%,#ff9ff3 65%,#ff6b6b 100%);
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:bsh 5s linear infinite;}
+@keyframes bsh{0%{background-position:0% center}100%{background-position:200% center}}
+.brand-sub{font-size:10px;color:var(--t3);font-weight:500;letter-spacing:.06em;margin-top:2px;}
+
+.live-badge{display:flex;align-items:center;gap:5px;background:rgba(29,209,161,0.1);border:1px solid rgba(29,209,161,0.25);border-radius:20px;padding:5px 10px;}
+.live-dot{width:7px;height:7px;background:#1dd1a1;border-radius:50%;box-shadow:0 0 10px rgba(29,209,161,0.9);animation:ldp 2s ease-in-out infinite;}
+.live-txt{font-size:10px;font-weight:700;color:#1dd1a1;letter-spacing:.06em;}
+@keyframes ldp{0%,100%{box-shadow:0 0 8px rgba(29,209,161,.8)}50%{box-shadow:0 0 18px rgba(29,209,161,1)}}
+
+/* ═══ CONTENT ═══ */
+.content{flex:1;overflow-y:auto;padding:18px 16px 56px;}
 ::-webkit-scrollbar{width:3px;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px;}
 
-/* ── SECTION LABEL ── */
-.slabel{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:block;}
+/* labels */
+.lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;display:block;}
 
-/* ── MODE TABS ── */
-.mode-tabs{
-  display:grid;grid-template-columns:1fr 1fr;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);
-  border-radius:var(--r16);
-  padding:4px;gap:4px;margin-bottom:20px;
-}
-.mode-tab{
-  padding:10px 0;border:none;background:transparent;
-  color:var(--text2);font-size:13px;font-weight:500;
-  border-radius:12px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  transition:all 0.3s ease;font-family:'Inter',sans-serif;
-}
-.mode-tab i{font-size:15px;}
-.mode-tab.active{
-  background:linear-gradient(135deg,var(--c1),var(--c4));
-  color:#fff;
-  box-shadow:0 4px 16px rgba(255,107,107,0.3);
-}
+/* ═══ TABS ═══ */
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,0.04);border:1px solid var(--bdr);border-radius:16px;padding:4px;gap:4px;margin-bottom:20px;}
+.mtab{padding:10px 0;border:none;background:transparent;color:var(--t2);font-size:13px;font-weight:600;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .28s;font-family:'Inter',sans-serif;}
+.mtab i{font-size:15px;}
+.mtab.active{background:linear-gradient(135deg,var(--c1),var(--c4));color:#fff;box-shadow:0 4px 18px rgba(255,107,107,.32);}
 
-/* ── INPUT TABS ── */
-.input-tabs{display:flex;gap:6px;margin-bottom:14px;}
-.itab{
-  padding:7px 16px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--text2);
-  border-radius:20px;font-size:12px;font-weight:500;
-  cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
-}
-.itab.active{border-color:rgba(255,107,107,0.6);color:var(--c1);background:rgba(255,107,107,0.08);}
+.itabs{display:flex;gap:6px;margin-bottom:14px;}
+.itab{padding:7px 16px;border:1px solid var(--bdr);background:transparent;color:var(--t2);border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.itab.active{border-color:rgba(255,107,107,.55);color:var(--c1);background:rgba(255,107,107,.08);}
 
-/* ── TEXTAREA / INPUT ── */
-textarea,input[type="text"],input[type="email"]{
+/* ═══ INPUTS ═══ */
+textarea,input[type=text],input[type=email]{
   width:100%;padding:13px 14px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);
-  border-radius:var(--r12);
-  color:var(--text1);
-  font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.55;
-  margin-bottom:12px;transition:all 0.25s;resize:none;
+  background:rgba(255,255,255,0.05);border:1px solid var(--bdr);border-radius:12px;
+  color:var(--t1);font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.55;
+  margin-bottom:12px;transition:all .22s;resize:none;
 }
-textarea::placeholder,input::placeholder{color:var(--text3);}
-textarea:focus,input:focus{
-  outline:none;
-  border-color:rgba(255,107,107,0.5);
-  background:rgba(255,255,255,0.07);
-  box-shadow:0 0 0 3px rgba(255,107,107,0.1);
-}
+textarea::placeholder,input::placeholder{color:var(--t3);}
+textarea:focus,input:focus{outline:none;border-color:rgba(255,107,107,.5);background:rgba(255,255,255,.07);box-shadow:0 0 0 3px rgba(255,107,107,.1);}
 
-/* ── BUTTONS ── */
-.btn-primary{
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,var(--c1) 0%,var(--c4) 100%);
-  color:#fff;border:none;border-radius:var(--r12);
-  font-size:13px;font-weight:700;letter-spacing:0.2px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:all 0.3s ease;font-family:'Inter',sans-serif;
-  box-shadow:0 4px 18px rgba(255,107,107,0.28);
-  position:relative;overflow:hidden;
-}
-.btn-primary::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,107,0.42);}
-.btn-primary:active{transform:translateY(0);}
+/* ═══ BUTTONS ═══ */
+.bp{width:100%;padding:13px;background:linear-gradient(135deg,var(--c1),var(--c4));color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .28s;font-family:'Inter',sans-serif;box-shadow:0 4px 20px rgba(255,107,107,.26);position:relative;overflow:hidden;}
+.bp::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent);}
+.bp:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,107,.42);}
+.bp:active{transform:translateY(0);}
 
-.btn-secondary{
-  width:100%;padding:11px;
-  background:rgba(255,255,255,0.06);
-  color:var(--text2);border:1px solid var(--border);
-  border-radius:var(--r12);font-size:13px;font-weight:500;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
-  transition:all 0.2s;font-family:'Inter',sans-serif;
-}
-.btn-secondary:hover{background:rgba(255,255,255,0.1);color:var(--text1);border-color:var(--border2);}
+.bs{width:100%;padding:11px;background:rgba(255,255,255,.06);color:var(--t2);border:1px solid var(--bdr);border-radius:12px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;font-family:'Inter',sans-serif;}
+.bs:hover{background:rgba(255,255,255,.1);color:var(--t1);border-color:var(--bdr2);}
+.bwa{background:rgba(29,209,161,.1);color:var(--c6);border-color:rgba(29,209,161,.22);}
+.bwa:hover{background:rgba(29,209,161,.18);color:var(--c6);}
 
-.btn-wa{background:rgba(37,211,102,0.1);color:#4ade80;border-color:rgba(37,211,102,0.2);}
-.btn-wa:hover{background:rgba(37,211,102,0.18);color:#4ade80;}
+/* ═══ FILE ═══ */
+input[type=file]{display:none;}
+.fl{display:block;padding:20px;border:1.5px dashed rgba(255,107,107,.35);border-radius:12px;text-align:center;cursor:pointer;transition:all .25s;background:rgba(255,107,107,.05);margin-bottom:12px;color:var(--c1);font-weight:600;font-size:13px;}
+.fl:hover{border-color:var(--c1);background:rgba(255,107,107,.1);}
+.fl i{font-size:24px;display:block;margin-bottom:6px;}
+.fn{font-size:12px;color:var(--t3);text-align:center;margin-bottom:12px;}
 
-/* ── FILE UPLOAD ── */
-input[type="file"]{display:none;}
-.file-label{
-  display:block;padding:20px 16px;
-  border:1.5px dashed rgba(255,107,107,0.35);
-  border-radius:var(--r12);text-align:center;cursor:pointer;
-  transition:all 0.25s;background:rgba(255,107,107,0.05);
-  margin-bottom:12px;color:var(--c1);font-weight:600;font-size:13px;
-}
-.file-label:hover{border-color:var(--c1);background:rgba(255,107,107,0.1);}
-.file-label i{font-size:24px;display:block;margin-bottom:6px;}
-.file-name-text{font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px;}
+/* ═══ RESULT CARD ═══ */
+.rcard{background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:20px;overflow:hidden;margin-top:18px;position:relative;}
+.rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--c1),var(--c4),var(--c3),var(--c2),var(--c1));background-size:200%;animation:rb 3s linear infinite;}
+@keyframes rb{0%{background-position:0% center}100%{background-position:200% center}}
+.rch{padding:16px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;gap:12px;}
+.cav{width:44px;height:44px;min-width:44px;background:linear-gradient(135deg,var(--c1),var(--c4));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;box-shadow:0 0 18px rgba(255,107,107,.32);}
+.cnm{font-size:17px;font-weight:700;color:var(--t1);letter-spacing:-.2px;}
+.crl{font-size:12px;color:var(--t2);margin-top:3px;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bdr);}
+.fc{padding:12px 14px;background:var(--bg);}
+.fk{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);font-weight:700;margin-bottom:5px;}
+.fv{font-size:13px;font-weight:600;color:var(--t1);}
+.fv.g{color:#4ade80;}
+.ssec{padding:14px 16px;border-top:1px solid var(--bdr);}
+.stxt{font-size:12.5px;line-height:1.7;color:var(--t2);}
+.arow{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;border-top:1px solid var(--bdr);}
+.arow .bs{padding:10px;}
 
-/* ── RESULT CARD ── */
-.result-card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);
-  border-radius:var(--r20);overflow:hidden;margin-top:18px;
-  position:relative;
-}
-.result-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--c1),var(--c4),var(--c3),var(--c2));
-  background-size:200% auto;
-  animation:rainbowSlide 3s linear infinite;
-}
-@keyframes rainbowSlide{0%{background-position:0% center;}100%{background-position:200% center;}}
-
-.rcard-head{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px;}
-.co-avatar{
-  width:44px;height:44px;min-width:44px;
-  background:linear-gradient(135deg,var(--c1),var(--c4));
-  border-radius:12px;display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:800;color:#fff;
-  box-shadow:0 0 16px rgba(255,107,107,0.35);
-}
-.co-name{font-size:17px;font-weight:700;color:var(--text1);letter-spacing:-0.2px;}
-.co-role{font-size:12px;color:var(--text2);margin-top:3px;}
-
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
-.fcell{padding:12px 14px;background:#0d0d0d;}
-.fkey{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-weight:700;margin-bottom:5px;}
-.fval{font-size:13px;font-weight:600;color:var(--text1);}
-.fval.green{color:#4ade80;}
-
-.sum-sec{padding:14px 16px;border-top:1px solid var(--border);}
-.sum-text{font-size:12.5px;line-height:1.7;color:var(--text2);}
-
-.act-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;border-top:1px solid var(--border);}
-.act-row .btn-secondary{padding:10px;}
-
-/* ── ATTACH ── */
-.attach-list{margin:10px 0;}
-.attach-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 12px;background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);border-radius:var(--r8);margin-bottom:7px;
-}
-.attach-item .ai-icon{font-size:15px;color:var(--c1);}
-.attach-item .aname{flex:1;font-size:12px;font-weight:500;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.rm-btn{background:rgba(239,68,68,0.1);color:#f87171;border:none;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
-.rm-btn:hover{background:rgba(239,68,68,0.2);}
+/* ═══ ATTACH ═══ */
+.alist{margin:10px 0;}
+.aitm{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:8px;margin-bottom:7px;}
+.aitm .aico{font-size:15px;color:var(--c1);}
+.aitm .anm{flex:1;font-size:12px;font-weight:500;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rmbtn{background:rgba(239,68,68,.1);color:#f87171;border:none;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
+.rmbtn:hover{background:rgba(239,68,68,.18);}
 
 .hidden{display:none!important;}
 
-/* ── MODAL OVERLAY ── */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.7);
-  backdrop-filter:blur(12px);
-  display:none;align-items:flex-end;z-index:1000;
+/* ═══ MAIL SHEET ═══ */
+.sheet-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(16px);display:none;align-items:flex-end;z-index:1000;}
+.sheet-ov.show{display:flex;}
+.sheet{background:rgba(12,12,20,.98);border:1px solid var(--bdr);border-top:1px solid rgba(255,255,255,.14);border-radius:24px 24px 0 0;width:100%;max-height:92vh;overflow-y:auto;animation:sup .38s cubic-bezier(.34,1.2,.64,1);}
+@keyframes sup{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.dpill{width:38px;height:4px;background:rgba(255,255,255,.14);border-radius:2px;margin:14px auto 0;}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 16px;border-bottom:1px solid var(--bdr);}
+.mhdr h2{font-size:17px;font-weight:700;}
+.xbtn{width:32px;height:32px;background:rgba(255,255,255,.06);border:1px solid var(--bdr);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);font-size:15px;transition:all .2s;}
+.xbtn:hover{background:rgba(255,255,255,.1);color:var(--t1);}
+.mbdy{padding:18px 20px;}
+.mwrap{background:rgba(255,255,255,.04);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+.msubj{padding:11px 14px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:8px;}
+.mbodyp{padding:12px 14px;font-size:12.5px;line-height:1.7;color:var(--t2);max-height:130px;overflow-y:auto;white-space:pre-wrap;}
+.etog{width:100%;padding:9px;background:transparent;border:1px dashed rgba(255,107,107,.3);color:var(--c1);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;margin-bottom:14px;}
+.etog:hover{background:rgba(255,107,107,.08);}
+.tedit{width:100%;padding:13px 14px;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,107,107,.4);border-radius:12px;color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;min-height:120px;resize:vertical;margin-bottom:10px;}
+.tedit:focus{outline:none;box-shadow:0 0 0 3px rgba(255,107,107,.12);}
+.eacts{display:flex;gap:8px;margin-bottom:14px;}
+.eacts button{flex:1;padding:9px;font-size:12px;}
+.mftr{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--bdr);}
+.mftr button{flex:1;}
+
+/* ═══ CARTOON POPUP MODAL ═══ */
+.pop-ov{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;z-index:2000;padding:24px;}
+.pop-ov.show{display:flex;}
+
+.pop-box{
+  background:linear-gradient(160deg,var(--s2),var(--s3));
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:28px;
+  width:100%;max-width:310px;
+  padding:0 0 28px;
+  text-align:center;
+  position:relative;overflow:hidden;
+  animation:popIn .5s cubic-bezier(.34,1.4,.64,1);
 }
-.modal-overlay.show{display:flex;}
+@keyframes popIn{0%{transform:scale(.25) rotate(-12deg);opacity:0}60%{transform:scale(1.06) rotate(2deg)}80%{transform:scale(.97) rotate(-1deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.pop-rainbow{height:3px;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5),var(--c6),var(--c1));background-size:200%;animation:rb 2s linear infinite;border-radius:28px 28px 0 0;}
 
-/* ── MODAL SHEET ── */
-.modal{
-  background:rgba(18,18,18,0.98);
-  border:1px solid var(--border);
-  border-radius:24px 24px 0 0;
-  border-top:1px solid rgba(255,255,255,0.12);
-  width:100%;max-height:92vh;overflow-y:auto;
-  animation:sheetUp 0.38s cubic-bezier(0.34,1.2,0.64,1);
-}
-@keyframes sheetUp{from{transform:translateY(100%);opacity:0;}to{transform:translateY(0);opacity:1;}}
+/* scene area */
+.pop-scene{width:160px;height:160px;margin:20px auto 14px;position:relative;}
+.pop-scene canvas,.pop-scene svg{width:100%;height:100%;}
 
-.drag-pill{width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:14px auto 0;}
-.mheader{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 16px;border-bottom:1px solid var(--border);}
-.mheader h2{font-size:17px;font-weight:700;color:var(--text1);}
-.close-btn{width:32px;height:32px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;transition:all 0.2s;}
-.close-btn:hover{background:rgba(255,255,255,0.1);color:var(--text1);}
+.pop-title{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:800;color:var(--t1);margin-bottom:5px;letter-spacing:-.3px;}
+.pop-sub{font-size:13px;color:var(--t2);line-height:1.5;padding:0 20px;}
 
-.mbody{padding:18px 20px;}
+/* bouncing dots */
+.bdots{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;}
+.bd{width:9px;height:9px;border-radius:50%;}
+.bd:nth-child(1){background:var(--c1);animation:bdp 1.1s .0s ease-in-out infinite;}
+.bd:nth-child(2){background:var(--c4);animation:bdp 1.1s .18s ease-in-out infinite;}
+.bd:nth-child(3){background:var(--c3);animation:bdp 1.1s .36s ease-in-out infinite;}
+@keyframes bdp{0%,100%{transform:translateY(0) scale(1)}45%{transform:translateY(-10px) scale(1.2)}}
 
-.mail-wrap{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--r12);overflow:hidden;margin-bottom:14px;}
-.mail-subj{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--c1);display:flex;align-items:center;gap:8px;}
-.mail-body-p{padding:12px 14px;font-size:12.5px;line-height:1.7;color:var(--text2);max-height:130px;overflow-y:auto;white-space:pre-wrap;}
+/* ═══ SUCCESS POPUP ═══ */
+.suc-ov{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(18px);display:none;align-items:center;justify-content:center;z-index:2000;padding:24px;}
+.suc-ov.show{display:flex;}
+.suc-box{background:linear-gradient(160deg,var(--s2),var(--s3));border:1px solid rgba(255,255,255,.1);border-radius:28px;width:100%;max-width:300px;padding:0 0 28px;text-align:center;position:relative;overflow:hidden;animation:popIn .5s cubic-bezier(.34,1.4,.64,1);}
 
-.edit-toggle{
-  width:100%;padding:9px;background:transparent;
-  border:1px dashed rgba(255,107,107,0.3);color:var(--c1);
-  border-radius:var(--r8);font-size:12px;font-weight:500;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  transition:all 0.2s;margin-bottom:14px;
-}
-.edit-toggle:hover{background:rgba(255,107,107,0.08);}
+/* confetti pieces */
+.cpc{position:absolute;border-radius:2px;animation:cfal linear forwards;}
+@keyframes cfal{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(540deg);opacity:0}}
 
-.textarea-edit{
-  width:100%;padding:13px 14px;
-  background:rgba(255,255,255,0.05);
-  border:1.5px solid rgba(255,107,107,0.4);
-  border-radius:var(--r12);color:var(--text1);
-  font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;
-  min-height:120px;resize:vertical;margin-bottom:10px;
-}
-.textarea-edit:focus{outline:none;box-shadow:0 0 0 3px rgba(255,107,107,0.12);}
-
-.edit-actions{display:flex;gap:8px;margin-bottom:14px;}
-.edit-actions button{flex:1;padding:9px;font-size:12px;}
-
-.mfooter{display:flex;gap:10px;padding:16px 20px;border-top:1px solid var(--border);}
-.mfooter button{flex:1;}
-
-/* ── LOADING ── */
-.loading-inner{padding:50px 30px;display:flex;flex-direction:column;align-items:center;}
-.spinner{
-  width:44px;height:44px;
-  border:3px solid rgba(255,255,255,0.06);
-  border-top:3px solid var(--c1);
-  border-radius:50%;animation:spin 0.75s linear infinite;margin-bottom:20px;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-.lt{font-size:15px;font-weight:600;color:var(--text1);margin-bottom:5px;}
-.ld{font-size:12px;color:var(--text3);}
-
-/* ── SUCCESS ── */
-.success-inner{padding:44px 30px;display:flex;flex-direction:column;align-items:center;text-align:center;}
-.sicon{
-  width:64px;height:64px;
-  background:rgba(74,222,128,0.1);
-  border:1px solid rgba(74,222,128,0.3);
-  border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:28px;color:#4ade80;margin-bottom:20px;
-  animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow:0 0 24px rgba(74,222,128,0.25);
-}
-@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.stitle{font-size:17px;font-weight:700;color:var(--text1);margin-bottom:6px;}
-.ssub{font-size:13px;color:var(--text3);}
-.done-btn{
-  margin-top:24px;padding:11px 36px;
-  background:linear-gradient(135deg,var(--c1),var(--c4));
-  border:none;border-radius:var(--r12);
-  color:#fff;font-size:13px;font-weight:700;
-  cursor:pointer;font-family:'Inter',sans-serif;
-  box-shadow:0 4px 18px rgba(255,107,107,0.3);transition:all 0.2s;
-}
-.done-btn:hover{transform:translateY(-2px);}
-
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:24px;left:50%;
-  transform:translateX(-50%) translateY(120px);
-  background:rgba(30,30,30,0.95);
-  border:1px solid var(--border);
-  color:var(--text1);padding:11px 20px;border-radius:12px;
-  font-size:13px;font-weight:500;opacity:0;transition:all 0.3s ease;
-  z-index:9999;white-space:nowrap;
-  box-shadow:0 8px 30px rgba(0,0,0,0.5);
-  backdrop-filter:blur(12px);
-}
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(110px);background:rgba(18,18,26,.96);border:1px solid var(--bdr);color:var(--t1);padding:11px 20px;border-radius:12px;font-size:13px;font-weight:500;opacity:0;transition:all .28s;z-index:9999;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5);backdrop-filter:blur(12px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.sec{margin-bottom:18px;}
 
-.section{margin-bottom:18px;}
+/* ═══ CARTOON KEYFRAMES (used inside SVGs via style attr) ═══ */
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes blink{0%,88%,100%{transform:scaleY(1)}93%{transform:scaleY(.08)}}
+@keyframes wave{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-28deg)}}
+@keyframes waveR{0%,100%{transform:rotate(0deg)}50%{transform:rotate(28deg)}}
+@keyframes antPulse{0%,100%{r:4}50%{r:7}}
+@keyframes glow{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes scanY{0%{transform:translateY(0)}100%{transform:translateY(44px)}}
+@keyframes envBob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+@keyframes penWrite{0%,100%{transform:rotate(30deg) translate(0,0)}50%{transform:rotate(30deg) translate(3px,-3px)}}
+@keyframes rocketBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes flame{0%,100%{transform:scaleY(1) scaleX(1)}50%{transform:scaleY(1.3) scaleX(.85)}}
+@keyframes spk{0%,100%{opacity:0;transform:scale(0)}45%,55%{opacity:1;transform:scale(1)}}
+@keyframes checkDraw{0%{stroke-dashoffset:40}100%{stroke-dashoffset:0}}
+@keyframes ringPulse{0%{r:24;opacity:.8}100%{r:52;opacity:0}}
+@keyframes floatLetter{0%{transform:translate(0,0) rotate(-5deg)}50%{transform:translate(30px,-20px) rotate(10deg)}100%{transform:translate(70px,-10px) rotate(-3deg);opacity:0}}
 </style>
 </head>
 <body>
 
-<!-- ANIMATED BG LAYERS -->
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
-<div class="orb orb4"></div>
-<div class="grid-bg"></div>
-<div class="particles" id="particles"></div>
+<!-- ── BACKGROUND ── -->
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div>
+<div class="grid"></div>
+<div class="pts" id="pts"></div>
 
 <div class="shell">
 
-  <div class="header">
-    <div class="logo-wrap">
-      <div class="logo-box">✉</div>
-      <div class="logo-text">
-        <div class="t1">Mail Pro</div>
-        <div class="t2">Placement assistant</div>
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="hdr">
+  <!-- Animated header deco SVG -->
+  <svg class="hdr-deco" viewBox="0 0 430 72" fill="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:1;">
+    <!-- flying envelopes -->
+    <g style="animation:envBob 4s ease-in-out infinite;transform-origin:370px 20px;">
+      <rect x="356" y="10" width="30" height="22" rx="4" fill="none" stroke="rgba(255,159,243,0.35)" stroke-width="1.5"/>
+      <polyline points="356,10 371,22 386,10" fill="none" stroke="rgba(255,159,243,0.35)" stroke-width="1.5"/>
+      <circle cx="378" cy="28" r="3" fill="rgba(254,202,87,0.6)" style="animation:spk 2s .3s ease-in-out infinite;"/>
+    </g>
+    <g style="animation:envBob 5s 1.2s ease-in-out infinite;transform-origin:50px 50px;">
+      <rect x="38" y="42" width="22" height="16" rx="3" fill="none" stroke="rgba(84,160,255,0.3)" stroke-width="1.2"/>
+      <polyline points="38,42 49,50 60,42" fill="none" stroke="rgba(84,160,255,0.3)" stroke-width="1.2"/>
+    </g>
+    <!-- sparkles -->
+    <circle cx="300" cy="10" r="2.5" fill="rgba(254,202,87,0.7)" style="animation:spk 1.8s .2s ease-in-out infinite;"/>
+    <circle cx="160" cy="62" r="2" fill="rgba(72,219,251,0.7)" style="animation:spk 2.2s .6s ease-in-out infinite;"/>
+    <circle cx="110" cy="12" r="2" fill="rgba(255,107,107,0.6)" style="animation:spk 1.6s .9s ease-in-out infinite;"/>
+    <circle cx="340" cy="58" r="1.8" fill="rgba(29,209,161,0.7)" style="animation:spk 2s 1.1s ease-in-out infinite;"/>
+    <circle cx="220" cy="8" r="2.2" fill="rgba(255,159,243,0.65)" style="animation:spk 1.9s .4s ease-in-out infinite;"/>
+    <!-- subtle wave -->
+    <path d="M0,50 Q60,38 120,50 Q180,62 240,50 Q300,38 360,50 Q400,58 430,50" fill="none" stroke="rgba(255,107,107,0.18)" stroke-width="1.2"/>
+    <path d="M0,60 Q80,48 160,60 Q240,72 320,60 Q380,52 430,60" fill="none" stroke="rgba(84,160,255,0.12)" stroke-width="1"/>
+    <!-- small stars (4-point) -->
+    <path d="M200,20 L201.5,24 L206,24 L202.5,26.5 L204,31 L200,28 L196,31 L197.5,26.5 L194,24 L198.5,24 Z" fill="rgba(254,202,87,0.25)" style="animation:spk 2.5s .7s ease-in-out infinite;"/>
+  </svg>
+
+  <div class="hdr-inner">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="logo-mark">
+        <!-- animated envelope SVG logo -->
+        <svg class="logo-svg" viewBox="0 0 26 26" fill="none">
+          <rect x="1" y="5" width="24" height="17" rx="4" fill="rgba(255,107,107,0.2)" stroke="rgba(255,107,107,0.7)" stroke-width="1.4"/>
+          <polyline points="1,5 13,15 25,5" stroke="rgba(255,159,243,0.9)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <!-- mini star inside -->
+          <circle cx="19" cy="17" r="2" fill="#feca57" style="animation:glow 1.5s ease-in-out infinite;"/>
+          <circle cx="15" cy="19" r="1.2" fill="rgba(72,219,251,0.8)" style="animation:glow 1.8s .4s ease-in-out infinite;"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand">Mail Pro ✦</div>
+        <div class="brand-sub">Placement email assistant</div>
       </div>
     </div>
-    <div class="live-dot"></div>
-  </div>
-
-  <div class="content">
-
-    <div class="section">
-      <div class="mode-tabs">
-        <button class="mode-tab active" onclick="switchMode('analyze')"><i class="ti ti-search"></i> Analyze</button>
-        <button class="mode-tab" onclick="switchMode('custom')"><i class="ti ti-pencil"></i> Custom</button>
-      </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      <span class="live-txt">LIVE</span>
     </div>
-
-    <!-- ANALYZE -->
-    <div id="analyze-mode">
-      <div class="section">
-        <span class="slabel">Input method</span>
-        <div class="input-tabs">
-          <button class="itab active" onclick="switchTab('text')">Paste text</button>
-          <button class="itab" onclick="switchTab('file')">Upload file</button>
-        </div>
-        <div id="text-input">
-          <textarea id="notice-text" placeholder="Paste job notice here…" rows="6"></textarea>
-        </div>
-        <div id="file-input" class="hidden">
-          <label class="file-label" for="file-upload">
-            <i class="ti ti-cloud-upload"></i>PDF or image
-          </label>
-          <input type="file" id="file-upload" accept=".pdf,image/*">
-          <div id="file-name" class="file-name-text"></div>
-        </div>
-        <button class="btn-primary" onclick="analyzeNotice()">
-          <i class="ti ti-bolt"></i> Analyze notice
-        </button>
-      </div>
-
-      <div id="slip-section" class="hidden">
-        <span class="slabel">Opportunity</span>
-        <div class="result-card">
-          <div class="rcard-head">
-            <div class="co-avatar" id="company-initial">?</div>
-            <div>
-              <div class="co-name" id="company-name">—</div>
-              <div class="co-role" id="role-name">—</div>
-            </div>
-          </div>
-          <div class="field-grid">
-            <div class="fcell"><div class="fkey">CTC</div><div class="fval green" id="ctc">—</div></div>
-            <div class="fcell"><div class="fkey">Location</div><div class="fval" id="location">—</div></div>
-            <div class="fcell"><div class="fkey">Batch</div><div class="fval" id="batch">—</div></div>
-            <div class="fcell"><div class="fkey">Deadline</div><div class="fval" id="deadline">—</div></div>
-          </div>
-          <div class="sum-sec">
-            <span class="slabel">Summary</span>
-            <div class="sum-text" id="summary">—</div>
-          </div>
-          <div class="act-row">
-            <button class="btn-secondary" onclick="openMailModal()"><i class="ti ti-mail"></i> Draft mail</button>
-            <button class="btn-secondary btn-wa" onclick="generateWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CUSTOM -->
-    <div id="custom-mode" class="hidden">
-      <div class="section">
-        <div class="input-tabs">
-          <button class="itab active" onclick="switchCustomTab('ai')">AI generate</button>
-          <button class="itab" onclick="switchCustomTab('manual')">Write myself</button>
-        </div>
-        <div id="ai-section">
-          <textarea id="custom-instruction" placeholder="Describe the mail you need…" rows="5"></textarea>
-          <button class="btn-primary" onclick="generateCustomAI()"><i class="ti ti-sparkles"></i> Generate mail</button>
-        </div>
-        <div id="manual-section" class="hidden">
-          <input type="text" id="manual-subject" placeholder="Subject line">
-          <textarea id="manual-body" placeholder="Write your message…" rows="6"></textarea>
-          <button class="btn-primary" onclick="openManualMailModal()"><i class="ti ti-check"></i> Preview &amp; send</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- MAIL MODAL -->
-<div id="mailModal" class="modal-overlay">
-  <div class="modal">
-    <div class="drag-pill"></div>
-    <div class="mheader">
-      <h2>Draft mail</h2>
-      <button class="close-btn" onclick="closeModal('mailModal')"><i class="ti ti-x"></i></button>
+<!-- ═══════════ CONTENT ═══════════ -->
+<div class="content">
+  <div class="sec">
+    <div class="mode-tabs">
+      <button class="mtab active" onclick="switchMode('analyze')"><i class="ti ti-search"></i> Analyze</button>
+      <button class="mtab" onclick="switchMode('custom')"><i class="ti ti-pencil"></i> Custom</button>
     </div>
-    <div class="mbody">
-      <div class="mail-wrap">
-        <div class="mail-subj"><i class="ti ti-mail"></i><span id="modal-subject">Subject</span></div>
-        <div class="mail-body-p" id="modal-body">Body</div>
+  </div>
+
+  <!-- ANALYZE -->
+  <div id="analyze-mode">
+    <div class="sec">
+      <span class="lbl">Input method</span>
+      <div class="itabs">
+        <button class="itab active" onclick="switchTab('text')">Paste text</button>
+        <button class="itab" onclick="switchTab('file')">Upload file</button>
       </div>
-      <button class="edit-toggle" onclick="toggleEditMode()"><i class="ti ti-edit"></i> Edit mail</button>
-      <div id="edit-section" class="hidden">
-        <textarea id="edit-body" class="textarea-edit" placeholder="Edit your mail…"></textarea>
-        <div class="edit-actions">
-          <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
-          <button class="btn-primary" onclick="saveEdit()"><i class="ti ti-check"></i> Save</button>
+      <div id="text-input"><textarea id="notice-text" placeholder="Paste job notice here…" rows="6"></textarea></div>
+      <div id="file-input" class="hidden">
+        <label class="fl" for="file-upload"><i class="ti ti-cloud-upload"></i>PDF or image</label>
+        <input type="file" id="file-upload" accept=".pdf,image/*">
+        <div id="file-name" class="fn"></div>
+      </div>
+      <button class="bp" onclick="analyzeNotice()"><i class="ti ti-bolt"></i> Analyze notice</button>
+    </div>
+    <div id="slip-section" class="hidden">
+      <span class="lbl">Opportunity</span>
+      <div class="rcard">
+        <div class="rch">
+          <div class="cav" id="company-initial">?</div>
+          <div><div class="cnm" id="company-name">—</div><div class="crl" id="role-name">—</div></div>
+        </div>
+        <div class="fg">
+          <div class="fc"><div class="fk">CTC</div><div class="fv g" id="ctc">—</div></div>
+          <div class="fc"><div class="fk">Location</div><div class="fv" id="location">—</div></div>
+          <div class="fc"><div class="fk">Batch</div><div class="fv" id="batch">—</div></div>
+          <div class="fc"><div class="fk">Deadline</div><div class="fv" id="deadline">—</div></div>
+        </div>
+        <div class="ssec"><span class="lbl">Summary</span><div class="stxt" id="summary">—</div></div>
+        <div class="arow">
+          <button class="bs" onclick="openMailModal()"><i class="ti ti-mail"></i> Draft mail</button>
+          <button class="bs bwa" onclick="generateWA()"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
         </div>
       </div>
-      <span class="slabel">Attachments <span style="color:var(--text3);font-weight:400;">(up to 4)</span></span>
-      <label class="file-label" for="mail-attach-files" style="padding:13px 16px;">
-        <i class="ti ti-paperclip" style="font-size:18px;display:inline;margin:0 6px 0 0;"></i> Add files
-      </label>
+    </div>
+  </div>
+
+  <!-- CUSTOM -->
+  <div id="custom-mode" class="hidden">
+    <div class="sec">
+      <div class="itabs">
+        <button class="itab active" onclick="switchCustomTab('ai')">AI generate</button>
+        <button class="itab" onclick="switchCustomTab('manual')">Write myself</button>
+      </div>
+      <div id="ai-section">
+        <textarea id="custom-instruction" placeholder="Describe the mail you need…" rows="5"></textarea>
+        <button class="bp" onclick="generateCustomAI()"><i class="ti ti-sparkles"></i> Generate mail</button>
+      </div>
+      <div id="manual-section" class="hidden">
+        <input type="text" id="manual-subject" placeholder="Subject line">
+        <textarea id="manual-body" placeholder="Write your message…" rows="6"></textarea>
+        <button class="bp" onclick="openManualMailModal()"><i class="ti ti-check"></i> Preview &amp; send</button>
+      </div>
+    </div>
+  </div>
+</div><!-- /content -->
+</div><!-- /shell -->
+
+<!-- ═══════════ MAIL SHEET MODAL ═══════════ -->
+<div id="mailModal" class="sheet-ov">
+  <div class="sheet">
+    <div class="dpill"></div>
+    <div class="mhdr">
+      <h2>Draft mail</h2>
+      <button class="xbtn" onclick="closeSheet('mailModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="mbdy">
+      <div class="mwrap">
+        <div class="msubj"><i class="ti ti-mail"></i><span id="modal-subject">Subject</span></div>
+        <div class="mbodyp" id="modal-body">Body</div>
+      </div>
+      <button class="etog" onclick="toggleEditMode()"><i class="ti ti-edit"></i> Edit mail</button>
+      <div id="edit-section" class="hidden">
+        <textarea id="edit-body" class="tedit" placeholder="Edit your mail…"></textarea>
+        <div class="eacts">
+          <button class="bs" onclick="cancelEdit()">Cancel</button>
+          <button class="bp" onclick="saveEdit()"><i class="ti ti-check"></i> Save</button>
+        </div>
+      </div>
+      <span class="lbl">Attachments <span style="color:var(--t3);font-weight:400;">(up to 4)</span></span>
+      <label class="fl" for="mail-attach-files" style="padding:13px;"><i class="ti ti-paperclip" style="font-size:18px;display:inline;margin:0 6px 0 0;"></i> Add files</label>
       <input type="file" id="mail-attach-files" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,image/*">
-      <div class="attach-list" id="mail-attach-list"></div>
-      <span class="slabel">Recipient</span>
+      <div class="alist" id="mail-attach-list"></div>
+      <span class="lbl">Recipient</span>
       <input type="email" id="modal-email" placeholder="someone@example.com" style="margin-bottom:4px;">
     </div>
-    <div class="mfooter">
-      <button class="btn-secondary" onclick="closeModal('mailModal')">Cancel</button>
-      <button class="btn-primary" onclick="sendMailModal()"><i class="ti ti-send"></i> Send mail</button>
+    <div class="mftr">
+      <button class="bs" onclick="closeSheet('mailModal')">Cancel</button>
+      <button class="bp" onclick="sendMailModal()"><i class="ti ti-send"></i> Send mail</button>
     </div>
   </div>
 </div>
 
-<!-- LOADING MODAL -->
-<div id="loadingModal" class="modal-overlay">
-  <div class="modal">
-    <div class="drag-pill"></div>
-    <div class="loading-inner">
-      <div class="spinner"></div>
-      <div class="lt" id="loadingText">Processing…</div>
-      <div class="ld" id="loadingDesc">Please wait</div>
-    </div>
+<!-- ═══════════ CARTOON LOADING POPUP ═══════════ -->
+<div id="loadingModal" class="pop-ov">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <div class="pop-scene" id="pop-scene"></div>
+    <div class="pop-title" id="pop-title">Working…</div>
+    <div class="pop-sub" id="pop-sub">Please wait</div>
+    <div class="bdots"><div class="bd"></div><div class="bd"></div><div class="bd"></div></div>
   </div>
 </div>
 
-<!-- SUCCESS MODAL -->
-<div id="successModal" class="modal-overlay">
-  <div class="modal">
-    <div class="drag-pill"></div>
-    <div class="success-inner">
-      <div class="sicon"><i class="ti ti-check"></i></div>
-      <div class="stitle">Mail sent!</div>
-      <div class="ssub" id="successText">Delivered successfully.</div>
-      <button class="done-btn" onclick="closeAllModals()">Done</button>
+<!-- ═══════════ SUCCESS CARTOON POPUP ═══════════ -->
+<div id="successModal" class="suc-ov">
+  <div class="suc-box" id="suc-box">
+    <div class="pop-rainbow"></div>
+    <div class="pop-scene" style="width:150px;height:150px;margin:20px auto 14px;">
+      <svg viewBox="0 0 150 150" fill="none">
+        <!-- pulsing ring -->
+        <circle cx="75" cy="75" r="24" fill="rgba(29,209,161,0.12)" stroke="rgba(29,209,161,0.4)" stroke-width="1.5">
+          <animate attributeName="r" values="24;50;24" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0;0.8" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <!-- character circle -->
+        <g style="animation:bob 2.2s ease-in-out infinite;">
+          <circle cx="75" cy="72" r="34" fill="#0f1a14" stroke="#1dd1a1" stroke-width="2.2"/>
+          <!-- happy eyes (arched) -->
+          <path d="M62 64 Q66 58 70 64" stroke="#1dd1a1" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <path d="M80 64 Q84 58 88 64" stroke="#1dd1a1" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <!-- big smile -->
+          <path d="M62 77 Q75 92 88 77" stroke="#feca57" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- blush circles -->
+          <circle cx="61" cy="76" r="5" fill="rgba(255,107,107,0.25)"/>
+          <circle cx="89" cy="76" r="5" fill="rgba(255,107,107,0.25)"/>
+          <!-- check on forehead -->
+          <polyline points="67,68 73,76 86,58" stroke="#1dd1a1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            stroke-dasharray="40" stroke-dashoffset="40" style="animation:checkDraw .6s .2s ease-out forwards;"/>
+        </g>
+        <!-- flying envelope -->
+        <g style="animation:floatLetter 2.8s ease-in-out infinite;">
+          <rect x="100" y="95" width="30" height="21" rx="4" fill="none" stroke="#ff9ff3" stroke-width="1.5"/>
+          <polyline points="100,95 115,106 130,95" stroke="#ff9ff3" stroke-width="1.5" fill="none"/>
+        </g>
+        <!-- sparkles -->
+        <circle cx="22" cy="30" r="3.5" fill="#feca57" style="animation:spk 1.6s ease-in-out infinite;"/>
+        <circle cx="128" cy="28" r="3" fill="#ff6b6b" style="animation:spk 2s .4s ease-in-out infinite;"/>
+        <circle cx="130" cy="122" r="2.5" fill="#48dbfb" style="animation:spk 1.8s .7s ease-in-out infinite;"/>
+        <circle cx="18" cy="118" r="3" fill="#ff9ff3" style="animation:spk 2.2s .2s ease-in-out infinite;"/>
+      </svg>
     </div>
+    <div class="pop-title" style="color:#1dd1a1;">Woohoo! 🎉</div>
+    <div class="pop-sub" id="successText" style="margin-top:5px;">Mail delivered!</div>
+    <button class="bp" style="margin:20px 20px 0;width:calc(100% - 40px);" onclick="closeAllModals()">Done ✓</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── particles ──
-(function(){
-  const c=document.getElementById('particles');
-  const cols=['#ff6b6b','#54a0ff','#ff9ff3','#feca57','#48dbfb','#1dd1a1'];
-  for(let i=0;i<22;i++){
-    const p=document.createElement('div');p.className='p';
+/* ── particles ── */
+(()=>{
+  const c=document.getElementById('pts');
+  const cl=['#ff6b6b','#54a0ff','#ff9ff3','#feca57','#48dbfb','#1dd1a1'];
+  for(let i=0;i<26;i++){
+    const p=document.createElement('div');p.className='pt';
     const s=Math.random()*5+2;
-    p.style.cssText=`
-      width:${s}px;height:${s}px;
-      background:${cols[Math.floor(Math.random()*cols.length)]};
-      left:${Math.random()*100}%;
-      animation-duration:${Math.random()*18+10}s;
-      animation-delay:${Math.random()*-20}s;
-      opacity:${Math.random()*0.5+0.2};
-      border-radius:50%;
-    `;
+    Object.assign(p.style,{width:s+'px',height:s+'px',background:cl[Math.floor(Math.random()*cl.length)],left:Math.random()*100+'%',animationDuration:(Math.random()*16+10)+'s',animationDelay:(Math.random()*-22)+'s',opacity:Math.random()*.5+.2,position:'absolute'});
     c.appendChild(p);
   }
 })();
 
-// ── app logic ──
-const API='https://cpdd-web.onrender.com';
-let state={mode:'analyze',jobData:null,originalText:'',mailSubject:'',mailBody:'',originalMailBody:'',mailAttachedFiles:[],isEditMode:false};
+/* ── cartoon scenes ── */
+const SCENES = {
+  analyze:{
+    title:'Analyzing…',
+    sub:'🤖 Robot is scanning your notice',
+    svg:`<svg viewBox="0 0 160 160" fill="none">
+      <!-- bg glow -->
+      <circle cx="80" cy="80" r="68" fill="rgba(255,107,107,0.06)" stroke="rgba(255,107,107,0.15)" stroke-width="1.5"/>
+      <!-- robot body group -->
+      <g style="animation:bob 1.4s ease-in-out infinite;">
+        <!-- torso -->
+        <rect x="52" y="90" width="56" height="46" rx="12" fill="#12122a" stroke="#ff6b6b" stroke-width="2.2"/>
+        <!-- neck -->
+        <rect x="70" y="82" width="20" height="12" rx="4" fill="#12122a" stroke="#ff6b6b" stroke-width="1.5"/>
+        <!-- head -->
+        <rect x="46" y="44" width="68" height="44" rx="14" fill="#12122a" stroke="#ff9ff3" stroke-width="2.2"/>
+        <!-- antenna -->
+        <line x1="80" y1="44" x2="80" y2="28" stroke="#ff9ff3" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="80" cy="24" r="6" fill="#ff6b6b"><animate attributeName="r" values="5;8;5" dur=".9s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;1;.7" dur=".9s" repeatCount="indefinite"/></circle>
+        <!-- eyes -->
+        <rect x="55" y="55" width="14" height="11" rx="5" fill="#48dbfb" style="animation:blink 3.2s ease-in-out infinite;transform-origin:62px 60px;"/>
+        <rect x="91" y="55" width="14" height="11" rx="5" fill="#48dbfb" style="animation:blink 3.2s ease-in-out .15s infinite;transform-origin:98px 60px;"/>
+        <!-- pupils -->
+        <circle cx="62" cy="60" r="3" fill="#0a2030"/>
+        <circle cx="98" cy="60" r="3" fill="#0a2030"/>
+        <!-- mouth -->
+        <path d="M65 76 Q80 85 95 76" stroke="#feca57" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <!-- chest panel -->
+        <rect x="60" y="100" width="40" height="26" rx="6" fill="#0e0e22" stroke="rgba(255,107,107,.4)" stroke-width="1.2"/>
+        <circle cx="80" cy="113" r="7" fill="#ff6b6b"><animate attributeName="opacity" values=".4;1;.4" dur="1.1s" repeatCount="indefinite"/></circle>
+        <!-- arms -->
+        <rect x="28" y="94" width="24" height="10" rx="5" fill="#12122a" stroke="#ff6b6b" stroke-width="1.8" style="animation:wave 1.4s ease-in-out infinite;transform-origin:52px 99px;"/>
+        <rect x="108" y="94" width="24" height="10" rx="5" fill="#12122a" stroke="#ff6b6b" stroke-width="1.8" style="animation:waveR 1.4s ease-in-out .7s infinite;transform-origin:108px 99px;"/>
+      </g>
+      <!-- document being scanned -->
+      <g>
+        <rect x="8" y="102" width="38" height="50" rx="6" fill="rgba(255,255,255,.04)" stroke="rgba(84,160,255,.45)" stroke-width="1.5"/>
+        <line x1="12" y1="113" x2="42" y2="113" stroke="rgba(84,160,255,.5)" stroke-width="1.2"/>
+        <line x1="12" y1="121" x2="40" y2="121" stroke="rgba(84,160,255,.35)" stroke-width="1.2"/>
+        <line x1="12" y1="129" x2="42" y2="129" stroke="rgba(84,160,255,.35)" stroke-width="1.2"/>
+        <line x1="12" y1="137" x2="38" y2="137" stroke="rgba(84,160,255,.25)" stroke-width="1.2"/>
+        <!-- scan beam -->
+        <rect x="8" y="102" width="38" height="3.5" fill="rgba(72,219,251,.5)" rx="1" style="animation:scanY 1.6s ease-in-out infinite;"/>
+      </g>
+      <!-- sparkles -->
+      <circle cx="20" cy="35" r="3.5" fill="#feca57" style="animation:spk 1.7s ease-in-out infinite;"/>
+      <circle cx="140" cy="42" r="3" fill="#ff9ff3" style="animation:spk 2.1s .5s ease-in-out infinite;"/>
+      <circle cx="144" cy="130" r="2.5" fill="#48dbfb" style="animation:spk 1.5s .3s ease-in-out infinite;"/>
+      <circle cx="18" cy="140" r="2.8" fill="#1dd1a1" style="animation:spk 2s .8s ease-in-out infinite;"/>
+    </svg>`
+  },
+  mail:{
+    title:'Creating mail…',
+    sub:'✍️ Crafting the perfect message',
+    svg:`<svg viewBox="0 0 160 160" fill="none">
+      <circle cx="80" cy="80" r="68" fill="rgba(255,159,243,0.06)" stroke="rgba(255,159,243,0.15)" stroke-width="1.5"/>
+      <!-- large envelope bobbing -->
+      <g style="animation:envBob 2s ease-in-out infinite;">
+        <rect x="22" y="52" width="116" height="80" rx="10" fill="#16102a" stroke="#ff9ff3" stroke-width="2.2"/>
+        <!-- envelope flap -->
+        <path d="M22,52 L80,92 L138,52" fill="none" stroke="#ff9ff3" stroke-width="2.2" stroke-linejoin="round"/>
+        <!-- bottom fold lines -->
+        <line x1="22" y1="132" x2="58" y2="100" stroke="rgba(255,159,243,.35)" stroke-width="1.5"/>
+        <line x1="138" y1="132" x2="102" y2="100" stroke="rgba(255,159,243,.35)" stroke-width="1.5"/>
+        <!-- letter inside -->
+        <rect x="44" y="74" width="72" height="44" rx="5" fill="rgba(255,255,255,.05)" stroke="rgba(255,159,243,.2)" stroke-width="1"/>
+        <line x1="52" y1="86" x2="108" y2="86" stroke="rgba(255,255,255,.25)" stroke-width="1.2"/>
+        <line x1="52" y1="93" x2="100" y2="93" stroke="rgba(255,255,255,.18)" stroke-width="1.2"/>
+        <line x1="52" y1="100" x2="104" y2="100" stroke="rgba(255,255,255,.18)" stroke-width="1.2"/>
+      </g>
+      <!-- pencil writing -->
+      <g style="animation:penWrite 1s ease-in-out infinite;transform-origin:115px 42px;">
+        <rect x="108" y="14" width="10" height="36" rx="3" fill="#feca57" transform="rotate(32,113,32)"/>
+        <polygon points="109,49 117,49 113,58" fill="#ff6b6b" transform="rotate(32,113,53)"/>
+        <rect x="108" y="14" width="10" height="8" rx="3" fill="rgba(255,255,255,.4)" transform="rotate(32,113,18)"/>
+      </g>
+      <!-- sparkles -->
+      <circle cx="18" cy="32" r="4" fill="#feca57" style="animation:spk 1.5s ease-in-out infinite;"/>
+      <circle cx="140" cy="28" r="3.5" fill="#ff6b6b" style="animation:spk 2s .4s ease-in-out infinite;"/>
+      <circle cx="142" cy="138" r="3" fill="#48dbfb" style="animation:spk 1.8s .65s ease-in-out infinite;"/>
+      <circle cx="18" cy="140" r="3.5" fill="#1dd1a1" style="animation:spk 2.2s .25s ease-in-out infinite;"/>
+      <text x="124" y="78" font-size="16" style="animation:spk 1.6s .35s ease-in-out infinite;">⭐</text>
+      <text x="22" y="66" font-size="13" style="animation:spk 2s .75s ease-in-out infinite;">✨</text>
+    </svg>`
+  },
+  send:{
+    title:'Sending…',
+    sub:'🚀 Your mail is flying away!',
+    svg:`<svg viewBox="0 0 160 160" fill="none">
+      <circle cx="80" cy="80" r="68" fill="rgba(84,160,255,0.06)" stroke="rgba(84,160,255,0.15)" stroke-width="1.5"/>
+      <!-- rocket -->
+      <g style="animation:rocketBob 0.75s ease-in-out infinite;">
+        <!-- body -->
+        <path d="M80,18 Q100,35 100,70 L80,84 L60,70 Q60,35 80,18Z" fill="#12123a" stroke="#54a0ff" stroke-width="2.2"/>
+        <!-- nose tip -->
+        <path d="M70,22 Q80,14 90,22" fill="#ff6b6b" stroke="none"/>
+        <!-- window -->
+        <circle cx="80" cy="55" r="11" fill="rgba(72,219,251,.18)" stroke="#48dbfb" stroke-width="1.8"/>
+        <!-- face in window -->
+        <circle cx="76.5" cy="53" r="2.2" fill="#48dbfb"/>
+        <circle cx="83.5" cy="53" r="2.2" fill="#48dbfb"/>
+        <path d="M75,59 Q80,64 85,59" stroke="#feca57" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- fins -->
+        <path d="M60,70 L44,92 L60,86Z" fill="#ff6b6b"/>
+        <path d="M100,70 L116,92 L100,86Z" fill="#ff6b6b"/>
+        <!-- flame -->
+        <ellipse cx="80" cy="90" rx="10" ry="16" fill="#feca57" style="animation:flame 0.28s ease-in-out infinite;transform-origin:80px 90px;"/>
+        <ellipse cx="80" cy="92" rx="6.5" ry="11" fill="#ff6b6b" style="animation:flame 0.28s ease-in-out .1s infinite;transform-origin:80px 92px;"/>
+        <ellipse cx="80" cy="94" rx="3.5" ry="7" fill="white" opacity=".7" style="animation:flame 0.28s ease-in-out .05s infinite;transform-origin:80px 94px;"/>
+      </g>
+      <!-- speed lines -->
+      <line x1="10" y1="85" x2="46" y2="85" stroke="rgba(84,160,255,.45)" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>
+      <line x1="6" y1="96" x2="42" y2="96" stroke="rgba(84,160,255,.3)" stroke-width="1.5" stroke-dasharray="5 4" stroke-linecap="round"/>
+      <line x1="14" y1="74" x2="46" y2="74" stroke="rgba(84,160,255,.25)" stroke-width="1.2" stroke-dasharray="5 4" stroke-linecap="round"/>
+      <!-- envelope flying away -->
+      <g style="animation:floatLetter 3s ease-in-out infinite;">
+        <rect x="110" y="110" width="32" height="22" rx="4" fill="none" stroke="#ff9ff3" stroke-width="1.8"/>
+        <polyline points="110,110 126,122 142,110" stroke="#ff9ff3" stroke-width="1.8" fill="none"/>
+      </g>
+      <!-- cloud trail -->
+      <ellipse cx="80" cy="128" rx="14" ry="8" fill="rgba(255,255,255,.05)" style="animation:spk 1s ease-in-out infinite;"/>
+      <!-- sparkles -->
+      <circle cx="22" cy="28" r="3.5" fill="#feca57" style="animation:spk 1.7s ease-in-out infinite;"/>
+      <circle cx="138" cy="22" r="3" fill="#ff9ff3" style="animation:spk 2s .5s ease-in-out infinite;"/>
+      <circle cx="142" cy="130" r="2.5" fill="#48dbfb" style="animation:spk 1.6s .3s ease-in-out infinite;"/>
+    </svg>`
+  }
+};
 
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
-function showModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
+function setScene(type){
+  const sc=SCENES[type]||SCENES.analyze;
+  document.getElementById('pop-scene').innerHTML=sc.svg;
+  document.getElementById('pop-title').textContent=sc.title;
+  document.getElementById('pop-sub').textContent=sc.sub;
+}
+function showLoading(type){setScene(type);document.getElementById('loadingModal').classList.add('show');}
+function hideLoading(){document.getElementById('loadingModal').classList.remove('show');}
+
+/* ── confetti ── */
+function spawnConfetti(){
+  const box=document.getElementById('suc-box');
+  const cl=['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#1dd1a1','#54a0ff','#fff'];
+  for(let i=0;i<24;i++){
+    const c=document.createElement('div');c.className='cpc';
+    const s=Math.random()*9+5;
+    Object.assign(c.style,{
+      left:Math.random()*100+'%',top:'40px',
+      width:s+'px',height:s+'px',
+      background:cl[i%cl.length],
+      borderRadius:Math.random()>.5?'50%':'3px',
+      transform:`rotate(${Math.random()*360}deg)`,
+      animationDuration:(Math.random()*.9+.8)+'s',
+      animationDelay:(Math.random()*.5)+'s'
+    });
+    box.appendChild(c);
+    setTimeout(()=>c.remove(),2500);
+  }
+}
+
+/* ── modal helpers ── */
+function showSheet(id){document.getElementById(id).classList.add('show');}
+function closeSheet(id){document.getElementById(id).classList.remove('show');}
 function closeAllModals(){
-  document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('show'));
+  document.querySelectorAll('.sheet-ov,.pop-ov,.suc-ov').forEach(m=>m.classList.remove('show'));
   state.mailAttachedFiles=[];state.isEditMode=false;
   document.getElementById('edit-section').classList.add('hidden');
   document.getElementById('mail-attach-list').innerHTML='';
 }
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2600);}
 
+/* ── tab switchers ── */
 function switchMode(mode){
   state.mode=mode;
   document.getElementById('analyze-mode').classList.toggle('hidden',mode!=='analyze');
   document.getElementById('custom-mode').classList.toggle('hidden',mode!=='custom');
-  document.querySelectorAll('.mode-tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='analyze')||(i===1&&mode==='custom')));
+  document.querySelectorAll('.mtab').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='analyze')||(i===1&&mode==='custom')));
 }
 function switchTab(tab){
   document.getElementById('text-input').classList.toggle('hidden',tab!=='text');
@@ -574,27 +659,36 @@ function switchCustomTab(which){
   document.querySelectorAll('#custom-mode .itab').forEach((b,i)=>b.classList.toggle('active',(i===0&&which==='ai')||(i===1&&which==='manual')));
 }
 
+/* ── attachments ── */
 document.getElementById('file-upload').addEventListener('change',e=>{document.getElementById('file-name').textContent=e.target.files[0]?.name||'';});
 document.getElementById('mail-attach-files').addEventListener('change',e=>{
   state.mailAttachedFiles=Array.from(e.target.files).slice(0,4);
-  renderMailAttachments();
-  if(state.mailAttachedFiles.length>0)toast(`✓ ${state.mailAttachedFiles.length} file(s) added`);
+  renderAttach();
+  if(state.mailAttachedFiles.length)toast(`✓ ${state.mailAttachedFiles.length} file(s) added`);
   e.target.value='';
 });
-function renderMailAttachments(){
-  const list=document.getElementById('mail-attach-list');
-  if(!state.mailAttachedFiles.length){list.innerHTML='';return;}
-  list.innerHTML=state.mailAttachedFiles.map((f,i)=>`<div class="attach-item"><i class="ti ti-paperclip ai-icon"></i><span class="aname">${f.name}</span><button class="rm-btn" onclick="removeMailAttach(${i})">Remove</button></div>`).join('');
+function renderAttach(){
+  const l=document.getElementById('mail-attach-list');
+  if(!state.mailAttachedFiles.length){l.innerHTML='';return;}
+  l.innerHTML=state.mailAttachedFiles.map((f,i)=>`<div class="aitm"><i class="ti ti-paperclip aico"></i><span class="anm">${f.name}</span><button class="rmbtn" onclick="removeAttach(${i})">Remove</button></div>`).join('');
 }
-function removeMailAttach(i){state.mailAttachedFiles.splice(i,1);renderMailAttachments();}
+function removeAttach(i){state.mailAttachedFiles.splice(i,1);renderAttach();}
+
+/* ── edit ── */
 function toggleEditMode(){state.isEditMode=!state.isEditMode;document.getElementById('edit-section').classList.toggle('hidden');if(state.isEditMode)document.getElementById('edit-body').value=state.mailBody;}
 function cancelEdit(){state.isEditMode=false;document.getElementById('edit-section').classList.add('hidden');}
 function saveEdit(){const nb=document.getElementById('edit-body').value.trim();if(!nb){toast('❌ Body cannot be empty');return;}state.mailBody=nb;document.getElementById('modal-body').textContent=state.mailBody;state.isEditMode=false;document.getElementById('edit-section').classList.add('hidden');toast('✓ Mail updated');}
 
+/* ══════════════════════════════
+   APP STATE + API FUNCTIONS
+══════════════════════════════ */
+const API='https://cpdd-web.onrender.com';
+let state={mode:'analyze',jobData:null,originalText:'',mailSubject:'',mailBody:'',originalMailBody:'',mailAttachedFiles:[],isEditMode:false};
+
 async function analyzeNotice(){
   const text=document.getElementById('notice-text').value.trim();
   if(!text){toast('❌ Paste or upload a notice');return;}
-  showModal('loadingModal');document.getElementById('loadingText').textContent='Analyzing notice…';document.getElementById('loadingDesc').textContent='Reading your job notice';
+  showLoading('analyze');
   try{
     const res=await fetch(`${API}/api/analyze-notice`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
@@ -609,13 +703,13 @@ async function analyzeNotice(){
     document.getElementById('deadline').textContent=data.jobData.deadline||'—';
     document.getElementById('summary').textContent=data.jobData.summary||'—';
     document.getElementById('slip-section').classList.remove('hidden');
-    closeModal('loadingModal');toast('✓ Analysis complete');
-  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
+    hideLoading();toast('✓ Analysis complete');
+  }catch(e){hideLoading();toast('❌ '+e.message);}
 }
 
 async function openMailModal(){
   if(!state.jobData)return;
-  showModal('loadingModal');document.getElementById('loadingText').textContent='Drafting mail…';document.getElementById('loadingDesc').textContent='One moment';
+  showLoading('mail');
   try{
     const res=await fetch(`${API}/api/generate-mail`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({originalText:state.originalText,jobData:state.jobData})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
@@ -625,8 +719,8 @@ async function openMailModal(){
     document.getElementById('modal-body').textContent=state.mailBody;
     document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
     document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
-    closeModal('loadingModal');showModal('mailModal');
-  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
+    hideLoading();showSheet('mailModal');
+  }catch(e){hideLoading();toast('❌ '+e.message);}
 }
 
 async function generateWA(){
@@ -641,7 +735,7 @@ async function generateWA(){
 async function generateCustomAI(){
   const instruction=document.getElementById('custom-instruction').value.trim();
   if(!instruction){toast('❌ Describe what you need');return;}
-  showModal('loadingModal');document.getElementById('loadingText').textContent='Generating mail…';document.getElementById('loadingDesc').textContent='Creating your custom mail';
+  showLoading('mail');
   try{
     const res=await fetch(`${API}/api/generate-custom-mail`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instruction})});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
@@ -651,8 +745,8 @@ async function generateCustomAI(){
     document.getElementById('modal-body').textContent=state.mailBody;
     document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
     document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
-    closeModal('loadingModal');showModal('mailModal');
-  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
+    hideLoading();showSheet('mailModal');
+  }catch(e){hideLoading();toast('❌ '+e.message);}
 }
 
 function openManualMailModal(){
@@ -664,24 +758,27 @@ function openManualMailModal(){
   document.getElementById('modal-body').textContent=state.mailBody;
   document.getElementById('mail-attach-list').innerHTML='';document.getElementById('modal-email').value='';
   document.getElementById('edit-section').classList.add('hidden');state.isEditMode=false;
-  showModal('mailModal');
+  showSheet('mailModal');
 }
 
 async function sendMailModal(){
   const to=document.getElementById('modal-email').value.trim();
   if(!to||!to.includes('@')){toast('❌ Enter a valid email');return;}
   if(!state.mailBody){toast('❌ Mail is empty');return;}
-  showModal('loadingModal');document.getElementById('loadingText').textContent='Sending…';document.getElementById('loadingDesc').textContent=to;
+  closeSheet('mailModal');
+  showLoading('send');
   try{
     const fd=new FormData();
     fd.append('to',to);fd.append('subject',state.mailSubject);fd.append('body',state.mailBody);fd.append('jobData',JSON.stringify(state.jobData||{}));
     state.mailAttachedFiles.forEach(f=>fd.append('attachments',f));
     const res=await fetch(`${API}/api/send-mail`,{method:'POST',body:fd});
     const data=await res.json();if(!res.ok)throw new Error(data.error||'Failed');
-    closeModal('loadingModal');showModal('successModal');
-    document.getElementById('successText').textContent=`Delivered to ${to}`;
-    setTimeout(()=>closeAllModals(),2200);
-  }catch(e){closeModal('loadingModal');toast('❌ '+e.message);}
+    hideLoading();
+    document.getElementById('successText').textContent=`Delivered to ${to} 🚀`;
+    document.getElementById('successModal').classList.add('show');
+    setTimeout(spawnConfetti,80);
+    setTimeout(closeAllModals,3200);
+  }catch(e){hideLoading();toast('❌ '+e.message);}
 }
 </script>
 </body>
