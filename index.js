@@ -591,7 +591,7 @@ function buildEmailTemplate(subject, bodyText, jobData) {
           </tr>
           <tr>
             <td class="content-pad" style="background-color:#f8fafc;padding:16px 28px;text-align:center;border-top:1px solid #e5e7eb;">
-              <p style="margin:0;font-size:11px;color:#94a3b8;line-height:1.5;">This is an automated mail (Ayush Shukla) GCET Placement Cell &mdash; Career Planning &amp; Development Division.</p>
+              <p style="margin:0;font-size:11px;color:#94a3b8;line-height:1.5;">This is an automated mail  GCET Placement Cell &mdash; Career Planning &amp; Development Division.</p>
             </td>
           </tr>
         </table>
